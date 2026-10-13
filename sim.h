@@ -11,7 +11,7 @@
 
 //#define G 6.67e-11
 #define G 500
-#define eps 1e-9
+#define eps 5//e-9
 
 void InitBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT){
     cstl[0].setValues(50, Vector3{WIDTH/2     , HEIGHT/2, 0}, {4, 4, 0}, {0}, WHITE);
@@ -27,7 +27,8 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
     std::uniform_real_distribution<float> distP(pa, pb);
     std::uniform_real_distribution<float> distV(va, vb);
     std::uniform_int_distribution<int> distC(0, 255);
-    for(size_t i = 0; i < size; i++){
+    cstl[0].setValues(100, Vector3{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
+    for(size_t i = 1; i < size; i++){
         cstl[i].setValues(50, Vector3{WIDTH/2 + distP(gen), HEIGHT/2 + distP(gen), 0}, {distV(gen), distV(gen), 0}, {0}, 
                             Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
                                   static_cast<unsigned char>(distC(gen)), 255});
@@ -54,7 +55,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
             }
         }
     }
-
+    
     for(size_t i = 0; i < cstl.size(); i++){
         cstl[i].vel.x += cstl[i].acc.x * dt;
         cstl[i].vel.y += cstl[i].acc.y * dt;
