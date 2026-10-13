@@ -3,21 +3,35 @@
 
 #include <raylib.h>
 #include <iostream>
+#include <random>              
 #include <vector>
 #include <cmath>
 
 #include "body.h"
 
 //#define G 6.67e-11
-#define G 1000
+#define G 500
 #define eps 1e-9
 
 void InitBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT){
-    cstl[0].setValues(500, Vector3{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
+    cstl[0].setValues(50, Vector3{WIDTH/2     , HEIGHT/2, 0}, {4, 4, 0}, {0}, WHITE);
     cstl[1].setValues(50, Vector3{WIDTH/2 + 80, HEIGHT/2, 0}, {0, -10, 0}, {0}, RED);
     cstl[2].setValues(50, Vector3{WIDTH/2 - 80, HEIGHT/2, 0}, {0, 10, 0}, {0}, GREEN);
     cstl[3].setValues(50, Vector3{WIDTH/2, HEIGHT/2 + 80, 0}, {0, 10, 0}, {0}, GOLD);
     cstl[4].setValues(50, Vector3{WIDTH/2, HEIGHT/2 - 80, 0}, {0, -10, 0}, {0}, BLUE);
+}
+
+void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
+    size_t size = cstl.size();
+    std::mt19937 gen(seed);
+    std::uniform_real_distribution<float> distP(pa, pb);
+    std::uniform_real_distribution<float> distV(va, vb);
+    std::uniform_int_distribution<int> distC(0, 255);
+    for(size_t i = 0; i < size; i++){
+        cstl[i].setValues(50, Vector3{WIDTH/2 + distP(gen), HEIGHT/2 + distP(gen), 0}, {distV(gen), distV(gen), 0}, {0}, 
+                            Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
+                                  static_cast<unsigned char>(distC(gen)), 255});
+    }
 }
 
 void UpdateState(std::vector<Body> &cstl, float dt){

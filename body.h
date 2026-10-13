@@ -11,19 +11,15 @@ class Body{
         Vector3 vel;
         Vector3 acc;
         Color color;
+        std::vector<Vector3> trajectory; // soon
 
     public: 
 
         Body() : mass (1), pos ({0}), 
                     vel ({0}), acc ({0}), color (WHITE) {}
 
-        Body(double m, Vector3 p, Vector3 v, Vector3 a, Color c){
-            mass = m;
-            pos = p;
-            vel = v;
-            acc = a;
-            color = c;
-        }
+        Body(double m, Vector3 p, Vector3 v, Vector3 a, Color c) : 
+            mass (m), pos (p), vel (v), acc (a), color (c) {}
 
         void draw2D(){
             DrawCircle(pos.x, pos.y, 5, color);
