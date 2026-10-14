@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
-//    InitBodies(costellation, WIDTH, HEIGHT);
+    //InitBodies(costellation, WIDTH, HEIGHT);
     InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
 
     SetTargetFPS(60);         
