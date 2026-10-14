@@ -7,10 +7,10 @@
 #include "sim.h"
 #define WIDTH 800
 #define HEIGHT 450
-#define OFFA -100
-#define OFFB 100
-#define VX 10
-#define VY 10
+#define OFFA -200
+#define OFFB 200
+#define V_MIN -40
+#define V_MAX 40
 
 int main(int argc, char* argv[]){
     int size = 3;
@@ -26,12 +26,12 @@ int main(int argc, char* argv[]){
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
 //    InitBodies(costellation, WIDTH, HEIGHT);
-    InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, VX, VY);
+    InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
 
-    SetTargetFPS(24);         
+    SetTargetFPS(60);         
     while (!WindowShouldClose())   
     {
-        UpdateState(costellation, GetFrameTime());
+      UpdateState(costellation, GetFrameTime());
 
         BeginDrawing();
                ClearBackground(BLACK);
