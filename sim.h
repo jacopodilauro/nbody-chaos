@@ -13,14 +13,6 @@
 #define G 500
 #define eps 25.0f//e-9
 
-void InitBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT){
-    cstl[0].setValues(50, Vector3{WIDTH/2     , HEIGHT/2, 0}, {4, 4, 0}, {0}, WHITE);
-    cstl[1].setValues(50, Vector3{WIDTH/2 + 80, HEIGHT/2, 0}, {0, -10, 0}, {0}, RED);
-    cstl[2].setValues(50, Vector3{WIDTH/2 - 80, HEIGHT/2, 0}, {0, 10, 0}, {0}, GREEN);
-    cstl[3].setValues(50, Vector3{WIDTH/2, HEIGHT/2 + 80, 0}, {0, 10, 0}, {0}, GOLD);
-    cstl[4].setValues(50, Vector3{WIDTH/2, HEIGHT/2 - 80, 0}, {0, -10, 0}, {0}, BLUE);
-}
-
 void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.size();
     std::mt19937 gen(seed);
@@ -35,11 +27,27 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
     }
 }
 
-void UpdateState(std::vector<Body> &cstl, float dt){
-    for(size_t i = 0; i < cstl.size(); i++){
-        cstl[i].acc = Vector3{0, 0, 0};
+void InitNBodies3(std::vector<Body> &cstl, int seed, float pa, float pb, float va, float vb){
+    size_t size = cstl.size();
+    std::mt19937 gen(seed);
+    std::uniform_real_distribution<float> distP(pa, pb);
+    std::uniform_real_distribution<float> distV(va, vb);
+    std::uniform_int_distribution<int> distC(0, 255);
+    cstl[0].setValues(1000, Vector3{0, 100, 0}, {0, 0, 0}, {0}, WHITE);
+    for(size_t i = 1; i < size; i++){
+        cstl[i].setValues(50, Vector3{ distP(gen), distP(gen)+50, distP(gen) }, {distV(gen), distV(gen),  distV(gen)}, {0}, 
+                            Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
+                                  static_cast<unsigned char>(distC(gen)), 255});
+    }
+}
 
-        for(size_t j = 0; j < cstl.size(); j++){
+void UpdateState(std::vector<Body> &cstl, float dt){
+    for (size_t i = 0; i < cstl.size(); ++i) {
+        cstl[i].acc = Vector3{0.0f, 0.0f, 0.0f};
+    }
+
+    for(size_t i = 0; i < cstl.size(); i++){
+        for(size_t j = i+1; j < cstl.size(); j++){
             if(i != j){
                 float dx = cstl[j].pos.x - cstl[i].pos.x;
                 float dy = cstl[j].pos.y - cstl[i].pos.y;
@@ -47,11 +55,16 @@ void UpdateState(std::vector<Body> &cstl, float dt){
 
                 float distSqr = dx*dx + dy*dy + dz*dz + eps*eps;
                 float dist = std::sqrt(distSqr);
-                float factor = (G * (float)cstl[j].mass) / (distSqr * dist);
+                float factor_i = (G * (float)cstl[j].mass) / (distSqr * dist);
                 
-                cstl[i].acc.x += factor * dx;
-                cstl[i].acc.y += factor * dy;
-                cstl[i].acc.z += factor * dz;
+                cstl[i].acc.x += factor_i * dx;
+                cstl[i].acc.y += factor_i * dy;
+                cstl[i].acc.z += factor_i * dz;
+            
+                float factor_j = (G * (float)cstl[i].mass) / (distSqr * dist);
+                cstl[j].acc.x -= factor_j * dx;
+                cstl[j].acc.y -= factor_j * dy;
+                cstl[j].acc.z -= factor_j * dz;
             }
         }
     }
@@ -67,9 +80,15 @@ void UpdateState(std::vector<Body> &cstl, float dt){
     }
 }
 
-void DrawBodies(std::vector<Body> &cstl){
+void DrawBodies2(std::vector<Body> &cstl){
     for (Body& body : cstl) {
         body.draw2D();
+    }
+}
+
+void DrawBodies3(std::vector<Body> &cstl){
+    for (Body& body : cstl) {
+        body.draw3D();
     }
 }
 
