@@ -28,15 +28,13 @@ int main(int argc, char* argv[]){
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
-    Camera3D camera = { 0 };
+    Camera3D camera = {{ -200.0f, 200.0f, 200.0f }, { 0.0f, 100.0f, 0.0f },
+                        { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE};
 
     if (!is3D) {
         InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
     } else {
         InitNBodies3(costellation, seed, OFFA, OFFB, V_MIN, V_MAX);
-        
-        camera = {{ -200.0f, 200.0f, 200.0f }, { 0.0f, 100.0f, 0.0f },
-                    { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE};
         DisableCursor();
     }
     SetTargetFPS(60);         

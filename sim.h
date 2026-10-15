@@ -8,10 +8,9 @@
 #include <cmath>
 
 #include "body.h"
-
-//#define G 6.67e-11
-#define G 500
-#define eps 25.0f//e-9
+ 
+#define G 500 // 6.67e-11
+#define eps 25.0f// 1e-9
 
 void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.size();
@@ -19,9 +18,9 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
     std::uniform_real_distribution<float> distP(pa, pb);
     std::uniform_real_distribution<float> distV(va, vb);
     std::uniform_int_distribution<int> distC(0, 255);
-    cstl[0].setValues(1000, Vector3{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
+    cstl[0] = Body(1000, Vector3{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
     for(size_t i = 1; i < size; i++){
-        cstl[i].setValues(50, Vector3{WIDTH/2 + distP(gen), HEIGHT/2 + distP(gen), 0}, {distV(gen), distV(gen), 0}, {0}, 
+        cstl[i] = Body(50, Vector3{WIDTH/2 + distP(gen), HEIGHT/2 + distP(gen), 0}, {distV(gen), distV(gen), 0}, {0}, 
                             Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
                                   static_cast<unsigned char>(distC(gen)), 255});
     }
@@ -33,9 +32,9 @@ void InitNBodies3(std::vector<Body> &cstl, int seed, float pa, float pb, float v
     std::uniform_real_distribution<float> distP(pa, pb);
     std::uniform_real_distribution<float> distV(va, vb);
     std::uniform_int_distribution<int> distC(0, 255);
-    cstl[0].setValues(1000, Vector3{0, 100, 0}, {0, 0, 0}, {0}, WHITE);
+    cstl[0] = Body(1000, Vector3{0, 100, 0}, {0, 0, 0}, {0}, WHITE);
     for(size_t i = 1; i < size; i++){
-        cstl[i].setValues(50, Vector3{ distP(gen), distP(gen)+50, distP(gen) }, {distV(gen), distV(gen),  distV(gen)}, {0}, 
+        cstl[i] = Body(50, Vector3{ distP(gen), distP(gen)+50, distP(gen) }, {distV(gen), distV(gen),  distV(gen)}, {0}, 
                             Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
                                   static_cast<unsigned char>(distC(gen)), 255});
     }

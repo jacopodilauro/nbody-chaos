@@ -11,7 +11,7 @@ class Body{
         Vector3 vel;
         Vector3 acc;
         Color color;
-        std::vector<Vector3> trajectory;
+        std::vector<Vector3> trail;
 
         Body() : mass (1), pos ({0}), 
             vel ({0}), acc ({0}), color (WHITE) {}
@@ -23,7 +23,7 @@ class Body{
             DrawCircle(pos.x, pos.y, 5, color);
         }
 
-        void drawLine3D(){
+        void drawTrail3D(){
             for(int i = 1; i < 100; i++){
                 DrawLine3D(trajectory[i], trajectory[i-1], color);
             }
@@ -33,13 +33,6 @@ class Body{
             DrawSphere(pos, 10, color); 
         }
 
-        void setValues(double m, Vector3 p, Vector3 v, Vector3 a, Color c) {
-            mass = m;
-            pos = p;
-            vel = v;
-            acc = a;
-            color = c;
-        }
 };
 
 #endif
