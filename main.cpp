@@ -15,6 +15,8 @@
 int main(int argc, char* argv[]){
     uint size = 3;
     uint seed = 4;
+    uint skipFrame = 3;
+
     bool is3D = false;
     if(argc > 3){
         std::cout << "Use <number of body> <mode>" << std::endl;
@@ -28,35 +30,43 @@ int main(int argc, char* argv[]){
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
-    Camera3D camera = {{ -200.0f, 200.0f, 200.0f }, { 0.0f, 100.0f, 0.0f },
-                        { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE};
+    InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
+    Camera3D camera = { { WIDTH/2.0f, HEIGHT/2.0f + 200.0f, 300.0f },
+                        { static_cast<float>(costellation[0].pos.x), static_cast<float>(costellation[0].pos.y), static_cast<float>(costellation[0].pos.z) },            
+                        { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE };
 
-    if (!is3D) {
-        InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
-    } else {
-        InitNBodies3(costellation, seed, OFFA, OFFB, V_MIN, V_MAX);
+    
+    if (is3D) {
         DisableCursor();
     }
-    SetTargetFPS(60);         
+    
+
+    SetTargetFPS(60);
     while (!WindowShouldClose())   
-    {
-        DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
+    {   
         if (IsKeyPressed(KEY_SPACE)) {
             is3D = !is3D;
-            if (is3D) DisableCursor();
+            if (is3D) {
+                DisableCursor();
+            }
             else EnableCursor();
         }
 
         UpdateState(costellation, GetFrameTime());
-        if(is3D) UpdateCamera(&camera, CAMERA_FREE);
+        if(is3D){
+            if(skipFrame > 0) skipFrame--;
+            else UpdateCamera(&camera, CAMERA_FREE);
+        }
 
         BeginDrawing();
             ClearBackground(BLACK);
+            DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
+
             if (!is3D) {
                 DrawBodies2(costellation);
             } else {
                 BeginMode3D(camera);
-                    DrawGrid(50, 10);
+                    DrawCustomGrid(Vector3{ WIDTH / 2.0f, (HEIGHT / 2.0f) - 150.0f, 0.0f }, 50, 15.0f);
                     DrawBodies3(costellation);
                 EndMode3D();
             }

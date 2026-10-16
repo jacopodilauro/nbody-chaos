@@ -3,20 +3,23 @@
 
 #include <raylib.h>
 #include <vector>
+
+struct Vec3d { double x = 0, y = 0, z = 0; };
+
 class Body{
-    
+
     public: 
         double mass;
-        Vector3 pos;
-        Vector3 vel;
-        Vector3 acc;
+        Vec3d pos;
+        Vec3d vel;
+        Vec3d acc;
         Color color;
         std::vector<Vector3> trail;
 
         Body() : mass (1), pos ({0}), 
             vel ({0}), acc ({0}), color (WHITE) {}
 
-        Body(double m, Vector3 p, Vector3 v, Vector3 a, Color c) : 
+        Body(double m, Vec3d p, Vec3d v, Vec3d a, Color c) : 
             mass (m), pos (p), vel (v), acc (a), color (c) {}
 
         void draw2D(){
@@ -24,13 +27,13 @@ class Body{
         }
 
         void drawTrail3D(){
-            for(int i = 1; i < 100; i++){
-                DrawLine3D(trajectory[i], trajectory[i-1], color);
+            for(int i = 1; i < trail.size(); i++){
+                DrawLine3D(trail[i-1], trail[i], color); 
             }
         }
 
         void draw3D(){
-            DrawSphere(pos, 10, color); 
+            DrawSphere({static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z)}, 10, color); 
         }
 
 };
