@@ -26,6 +26,12 @@ class Body{
             DrawCircle(pos.x, pos.y, 5, color);
         }
 
+        void drawTrail2D(){
+            for(int i = 1; i < trail.size(); i++){
+                DrawLine(trail[i-1].x, trail[i-1].y, trail[i].x, trail[i].y, color); 
+            }
+        }
+
         void drawTrail3D(){
             for(int i = 1; i < trail.size(); i++){
                 DrawLine3D(trail[i-1], trail[i], color); 

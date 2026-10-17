@@ -14,7 +14,7 @@
 
 int main(int argc, char* argv[]){
     uint size = 3;
-    uint seed = 4;
+    uint seed = 10;
     uint skipFrame = 3;
 
     bool is3D = false;
@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
     InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
+    //InitFigure8(costellation);
     Camera3D camera = { { WIDTH/2.0f, HEIGHT/2.0f + 200.0f, 300.0f },
                         { static_cast<float>(costellation[0].pos.x), static_cast<float>(costellation[0].pos.y), static_cast<float>(costellation[0].pos.z) },            
                         { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE };
@@ -53,6 +54,7 @@ int main(int argc, char* argv[]){
         }
 
         UpdateState(costellation, GetFrameTime());
+        UpdateTrail(costellation);
         if(is3D){
             if(skipFrame > 0) skipFrame--;
             else UpdateCamera(&camera, CAMERA_FREE);

@@ -10,7 +10,11 @@
 #include "body.h"
  
 #define G 500 // 6.67e-11
-#define eps 0// 1e-9
+#define eps 20// 1e-9
+
+/**
+ * 1/4PiESp * q+ * q- /r^2
+ */
 
 void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.size();
@@ -18,12 +22,19 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
     std::uniform_real_distribution<float> distP(pa, pb);
     std::uniform_real_distribution<float> distV(va, vb);
     std::uniform_int_distribution<int> distC(0, 255);
-    cstl[0] = Body(1000, Vec3d{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
+    cstl[0] = Body(500, Vec3d{WIDTH/2     , HEIGHT/2, 0}, {0, 0, 0}, {0}, WHITE);
     for(size_t i = 1; i < size; i++){
         cstl[i] = Body(50, Vec3d{WIDTH/2 + distP(gen), HEIGHT/2 + distP(gen), distP(gen)}, {distV(gen), distV(gen), distV(gen)}, {0}, 
                             Color{static_cast<unsigned char>(distC(gen)), static_cast<unsigned char>(distC(gen)), 
                                   static_cast<unsigned char>(distC(gen)), 255});
     }
+}
+
+void InitFigure8(std::vector<Body> &cstl){
+    const double k = std::sqrt((double)G);   // sqrt(G * m), m = 1
+    cstl[0] = Body(1, Vec3d{-0.97000436,  0.24308753, 0}, Vec3d{ 0.466203685*k,  0.43236573*k, 0}, Vec3d{}, ORANGE);
+    cstl[1] = Body(1, Vec3d{ 0.97000436, -0.24308753, 0}, Vec3d{ 0.466203685*k,  0.43236573*k, 0}, Vec3d{}, WHITE);
+    cstl[2] = Body(1, Vec3d{ 0, 0, 0 },                   Vec3d{-0.93240737*k,  -0.86473146*k, 0}, Vec3d{}, PURPLE);
 }
 
 void UpdateState(std::vector<Body> &cstl, float dt){
@@ -47,7 +58,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
                 cstl[i].acc.z += factor_i * dz;
             }
         }
-    }
+    } // G * m_1 * m_2 / r^2, F = ma, v(t+dt) = v(t) * a, p(t+dt) = p(t) + v(t)*a^2(t)
     
     for(size_t i = 0; i < cstl.size(); i++){
         cstl[i].vel.x += cstl[i].acc.x * dt;
@@ -57,13 +68,18 @@ void UpdateState(std::vector<Body> &cstl, float dt){
         cstl[i].pos.x += cstl[i].vel.x * dt;
         cstl[i].pos.y += cstl[i].vel.y * dt;
         cstl[i].pos.z += cstl[i].vel.z * dt;
-        
+    }
+}
+
+void UpdateTrail(std::vector<Body> &cstl){
+    for(size_t i = 0; i < cstl.size(); i++){
         cstl[i].trail.push_back({static_cast<float>(cstl[i].pos.x), static_cast<float>(cstl[i].pos.y), static_cast<float>(cstl[i].pos.z)});
     }
 }
 
 void DrawBodies2(std::vector<Body> &cstl){
     for (Body& body : cstl) {
+        body.drawTrail2D();
         body.draw2D();
     }
 }
