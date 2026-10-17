@@ -61,6 +61,17 @@ void UpdateState(std::vector<Body> &cstl, float dt){
         cstl[i].pos.x += cstl[i].vel.x * dt;
         cstl[i].pos.y += cstl[i].vel.y * dt;
         cstl[i].pos.z += cstl[i].vel.z * dt;
+
+        if (cstl[i].mass < 1.0) {
+            double speed = std::sqrt(cstl[i].vel.x*cstl[i].vel.x + cstl[i].vel.y*cstl[i].vel.y + cstl[i].vel.z*cstl[i].vel.z);
+            float s = std::min(1.0f, static_cast<float>(speed / 600.0));
+            cstl[i].color = Color{
+                static_cast<unsigned char>(45 + 210 * s * s),
+                static_cast<unsigned char>(30 + 215 * s),
+                static_cast<unsigned char>(130 + 125 * s),
+                180
+            };
+        }
     }
 }
 
@@ -142,33 +153,8 @@ void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int
         double vy = centerVel.y + v * (dx / dist);
         double vz = centerVel.z;
 
-        // new
-        float t = (r - 25.0f) / (220.0f - 25.0f);
-        if (t < 0.0f) t = 0.0f;
-        if (t > 1.0f) t = 1.0f;
-
-Color col;
-if (isFirst) {
-    // Argento -> Blu Notte Artico
-    col = Color{
-        static_cast<unsigned char>(235 * (1.0f - t) + 60 * t),
-        static_cast<unsigned char>(245 * (1.0f - t) + 95 * t),
-        static_cast<unsigned char>(255 * (1.0f - t) + 155 * t),
-        180
-    };
-} else {
-    // Champagne -> Bronzo Antico
-    col = Color{
-        static_cast<unsigned char>(255 * (1.0f - t) + 150 * t),
-        static_cast<unsigned char>(240 * (1.0f - t) + 105 * t),
-        static_cast<unsigned char>(215 * (1.0f - t) + 80 * t),
-        180
-    };
-}
-        // and new
-        cstl[i] = Body(0.01, {px, py, pz}, {vx, vy, vz}, {0,0,0}, col);
+        cstl[i] = Body(0.01, {px, py, pz}, {vx, vy, vz}, {0,0,0}, WHITE);
     }
 }
-
 
 #endif
