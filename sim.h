@@ -30,13 +30,6 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
     }
 }
 
-void InitFigure8(std::vector<Body> &cstl){
-    const double k = std::sqrt((double)G);   // sqrt(G * m), m = 1
-    cstl[0] = Body(1, Vec3d{-0.97000436,  0.24308753, 0}, Vec3d{ 0.466203685*k,  0.43236573*k, 0}, Vec3d{}, ORANGE);
-    cstl[1] = Body(1, Vec3d{ 0.97000436, -0.24308753, 0}, Vec3d{ 0.466203685*k,  0.43236573*k, 0}, Vec3d{}, WHITE);
-    cstl[2] = Body(1, Vec3d{ 0, 0, 0 },                   Vec3d{-0.93240737*k,  -0.86473146*k, 0}, Vec3d{}, PURPLE);
-}
-
 void UpdateState(std::vector<Body> &cstl, float dt){
     for (size_t i = 0; i < cstl.size(); ++i) {
         cstl[i].acc = Vec3d{0.0f, 0.0f, 0.0f};
@@ -106,5 +99,76 @@ void DrawCustomGrid(Vector3 center, int slices, float spacing) {
                     lineColor );
     }
 }
+
+// Galaxy collision
+void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed) {
+    size_t size = cstl.size();
+    if (size < 2) return;
+    size_t half = size / 2;
+    std::mt19937 gen(seed);
+    std::uniform_real_distribution<float> distR(25.0f, 220.0f);
+    std::normal_distribution<float> noise(0.0f, 6.0f);
+
+    double bhMass = 80000.0;
+
+    Vec3d pos1 = {WIDTH / 2.0 - 300.0, HEIGHT / 2.0 + 100.0, 0.0};
+    Vec3d vel1 = {45.0, -10.0, 0.0};
+    cstl[0] = Body(bhMass, pos1, vel1, {0,0,0}, WHITE);
+
+    Vec3d pos2 = {WIDTH / 2.0 + 300.0, HEIGHT / 2.0 - 100.0, 0.0};
+    Vec3d vel2 = {-45.0, 10.0, 0.0};
+    cstl[half] = Body(bhMass, pos2, vel2, {0,0,0}, WHITE);
+
+    for (size_t i = 1; i < size; i++) {
+        if (i == half) continue;
+
+        bool isFirst = (i < half);
+        Vec3d centerPos = isFirst ? pos1 : pos2;
+        Vec3d centerVel = isFirst ? vel1 : vel2;
+
+        float r = distR(gen);
+        float angle = (i % 2) * PI + 2.0f * std::log(r) + (noise(gen) * 0.06f);
+
+        double px = centerPos.x + r * std::cos(angle);
+        double py = centerPos.y + r * std::sin(angle);
+        double pz = centerPos.z + noise(gen);
+
+        double dx = px - centerPos.x;
+        double dy = py - centerPos.y;
+        double dist = std::sqrt(dx*dx + dy*dy);
+        double v = std::sqrt((G * bhMass) / dist);
+
+        double vx = centerVel.x - v * (dy / dist);
+        double vy = centerVel.y + v * (dx / dist);
+        double vz = centerVel.z;
+
+        // new
+        float t = (r - 25.0f) / (220.0f - 25.0f);
+        if (t < 0.0f) t = 0.0f;
+        if (t > 1.0f) t = 1.0f;
+
+Color col;
+if (isFirst) {
+    // Argento -> Blu Notte Artico
+    col = Color{
+        static_cast<unsigned char>(235 * (1.0f - t) + 60 * t),
+        static_cast<unsigned char>(245 * (1.0f - t) + 95 * t),
+        static_cast<unsigned char>(255 * (1.0f - t) + 155 * t),
+        180
+    };
+} else {
+    // Champagne -> Bronzo Antico
+    col = Color{
+        static_cast<unsigned char>(255 * (1.0f - t) + 150 * t),
+        static_cast<unsigned char>(240 * (1.0f - t) + 105 * t),
+        static_cast<unsigned char>(215 * (1.0f - t) + 80 * t),
+        180
+    };
+}
+        // and new
+        cstl[i] = Body(0.01, {px, py, pz}, {vx, vy, vz}, {0,0,0}, col);
+    }
+}
+
 
 #endif

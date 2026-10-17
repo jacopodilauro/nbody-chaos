@@ -39,7 +39,7 @@ class Body{
         }
 
         void draw3D(){
-            DrawSphere({static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z)}, 10, color); 
+            DrawSphere({static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z)}, 5, color); 
         }
 
 };
