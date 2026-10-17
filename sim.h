@@ -37,6 +37,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
 
     for(size_t i = 0; i < cstl.size(); i++){
         for(size_t j = 0; j < cstl.size(); j++){
+            if (cstl[j].mass < 1.0) continue;
             if(i != j){
                 double dx = cstl[j].pos.x - cstl[i].pos.x;
                 double dy = cstl[j].pos.y - cstl[i].pos.y;
