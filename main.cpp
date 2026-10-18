@@ -5,8 +5,8 @@
 
 #include "body.h"
 #include "sim.h"
-#define WIDTH 1920 //1920x1080
-#define HEIGHT 1000
+#define WIDTH 1500 
+#define HEIGHT 800
 #define OFFA -100
 #define OFFB 100
 #define V_MIN -40
@@ -16,31 +16,61 @@ int main(int argc, char* argv[]){
     uint size = 3;
     uint seed = 4;
     uint skipFrame = 3;
-
     bool is3D = false;
-    if(argc > 3){
-        std::cout << "Use <number of body> <mode>" << std::endl;
-        return 1;
-    }else if(argc >= 2)
-        size = std::stoi(argv[1]);
-    if (argc == 3) 
-        is3D = std::stoi(argv[2]);
-    
+    bool sizetmp = false;
+    std::string modeCstl = "default";
+
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-3D") {
+            is3D = true;
+        } else if (arg == "-GlxCl") {
+            modeCstl = "GlxCl";
+        }else if (arg == "--seed") {
+            if (i + 1 >= argc) {
+                std::cerr << "Missing value for --seed\n";
+                return 1;
+            }
+            try {
+                seed = std::stoi(argv[++i]);
+            } catch (...) {
+                std::cerr << "Invalid seed\n";
+                return 1;
+            }
+        }else if (arg == "-h" || arg == "--help") {
+            std::cout << "Use: program <number of bodies> [-3D] [-GlxCl]\n";
+            return 0;
+        } else if (!arg.empty() && arg[0] == '-') {
+            std::cerr << "Unknown flag: " << arg << '\n';
+            return 1;
+        } else if (!sizetmp) {
+            try {
+                size = std::stoi(arg);
+                sizetmp = true;
+            } catch (...) {
+                std::cerr << "Invalid number\n";
+                return 1;
+            }
+        } else {
+            std::cerr << "Unexpected argument: " << arg << '\n';
+            return 1;
+        }
+    }
 
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     std::vector<Body> costellation(size);
-    //InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
-    InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed);
+
+    if(modeCstl == "GlxCl") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed);
+    else InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
+    
     Camera3D camera = { { WIDTH/2.0f, HEIGHT/2.0f + 200.0f, 700.0f },
                         { WIDTH/2, HEIGHT/2, 0/*static_cast<float>(costellation[0].pos.x), static_cast<float>(costellation[0].pos.y), static_cast<float>(costellation[0].pos.z)*/ },            
                         { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE };
-
     
     if (is3D) {
         DisableCursor();
     }
-    
 
     SetTargetFPS(60);
     while (!WindowShouldClose())   
