@@ -77,8 +77,13 @@ void UpdateState(std::vector<Body> &cstl, float dt){
 }
 
 void UpdateTrail(std::vector<Body> &cstl){
-    for(size_t i = 0; i < cstl.size(); i++){
+    size_t l = cstl.size();
+    for(size_t i = 0; i < l; i++){
         cstl[i].trail.push_back({static_cast<float>(cstl[i].pos.x), static_cast<float>(cstl[i].pos.y), static_cast<float>(cstl[i].pos.z)});
+        if(cstl[i].trail.size() > 50){
+            //cstl[i].trail.erase(cstl[i].trail.begin(), cstl[i].trail.begin() + 100);
+            cstl[i].trail.erase(cstl[i].trail.begin());
+        }   
     }
 }
 

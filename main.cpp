@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
         }
 
         UpdateState(costellation, GetFrameTime() * 0.25f);
-        //UpdateTrail(costellation);
+        UpdateTrail(costellation);
         if(is3D){
             if(skipFrame > 0) skipFrame--;
             else UpdateCamera(&camera, CAMERA_FREE);
