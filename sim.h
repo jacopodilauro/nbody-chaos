@@ -2,6 +2,7 @@
 #define SIM_H
 
 #include <raylib.h>
+#include <raymath.h>
 #include <iostream>
 #include <random>              
 #include <vector>
@@ -11,10 +12,6 @@
  
 #define G 500 // 6.67e-11
 #define eps 20// 1e-9
-
-/**
- * 1/4PiESp * q+ * q- /r^2
- */
 
 void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.size();
@@ -52,7 +49,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
                 cstl[i].acc.z += factor_i * dz;
             }
         }
-    } // G * m_1 * m_2 / r^2, F = ma, v(t+dt) = v(t) * a, p(t+dt) = p(t) + v(t)*a^2(t)
+    }
     
     for(size_t i = 0; i < cstl.size(); i++){
         cstl[i].vel.x += cstl[i].acc.x * dt;
@@ -62,16 +59,31 @@ void UpdateState(std::vector<Body> &cstl, float dt){
         cstl[i].pos.x += cstl[i].vel.x * dt;
         cstl[i].pos.y += cstl[i].vel.y * dt;
         cstl[i].pos.z += cstl[i].vel.z * dt;
+    }
+}
 
+void UpdateGalaxyColor(std::vector<Body> &cstl){
+    size_t m = cstl.size() / 2; 
+    
+    for(size_t i = 0; i < cstl.size(); i++){
         if (cstl[i].mass < 1.0) {
             double speed = std::sqrt(cstl[i].vel.x*cstl[i].vel.x + cstl[i].vel.y*cstl[i].vel.y + cstl[i].vel.z*cstl[i].vel.z);
             float s = std::min(1.0f, static_cast<float>(speed / 1300.0));
-            cstl[i].color = Color{
-                static_cast<unsigned char>(45 + 210 * s * s),
-                static_cast<unsigned char>(30 + 215 * s),
-                static_cast<unsigned char>(130 + 125 * s),
-                255
-            };
+            if(i < m){
+                cstl[i].color = Color{
+                    static_cast<unsigned char>(45 + 210 * s * s),
+                    static_cast<unsigned char>(30 + 215 * s),
+                    static_cast<unsigned char>(130 + 125 * s),
+                    255
+                };
+            }else{    
+                cstl[i].color = Color{
+                    static_cast<unsigned char>(100 + 155 * s),
+                    static_cast<unsigned char>(20 + 70 * s * s),
+                    static_cast<unsigned char>(140 - 50 * s),
+                    255
+                };
+            }   
         }
     }
 }
@@ -81,7 +93,6 @@ void UpdateTrail(std::vector<Body> &cstl){
     for(size_t i = 0; i < l; i++){
         cstl[i].trail.push_back({static_cast<float>(cstl[i].pos.x), static_cast<float>(cstl[i].pos.y), static_cast<float>(cstl[i].pos.z)});
         if(cstl[i].trail.size() > 25){
-            //cstl[i].trail.erase(cstl[i].trail.begin(), cstl[i].trail.begin() + 100);
             cstl[i].trail.erase(cstl[i].trail.begin());
         }   
     }
@@ -118,7 +129,7 @@ void DrawCustomGrid(Vector3 center, int slices, float spacing) {
 }
 
 // Galaxy collision
-void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed) {
+void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, float g1tilt, float g2tilt) {
     size_t size = cstl.size();
     if (size < 2) return;
     size_t half = size / 2;
@@ -127,6 +138,10 @@ void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int
     std::normal_distribution<float> noise(0.0f, 6.0f);
 
     double bhMass = 80000.0;
+
+    float tilt2 = g2tilt * DEG2RAD;
+    float tilt1 = g1tilt * DEG2RAD;
+    Vector3 axis = { 1.0f, 0.0f, 0.0f };
 
     Vec3d pos1 = {WIDTH / 2.0 - 300.0, HEIGHT / 2.0 + 100.0, 0.0};
     Vec3d vel1 = {45.0, -10.0, 0.0};
@@ -146,21 +161,24 @@ void InitGalaxyCollision(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int
         float r = distR(gen);
         float angle = (i % 2) * PI + 2.0f * std::log(r) + (noise(gen) * 0.06f);
 
-        double px = centerPos.x + r * std::cos(angle);
-        double py = centerPos.y + r * std::sin(angle);
-        double pz = centerPos.z + noise(gen);
+        Vector3 offPos = { r * std::cos(angle), r * std::sin(angle), noise(gen) };
 
-        double dx = px - centerPos.x;
-        double dy = py - centerPos.y;
-        double dist = std::sqrt(dx*dx + dy*dy);
-        double v = std::sqrt((G * bhMass) / dist);
+        float dist = std::sqrt(offPos.x * offPos.x + offPos.y * offPos.y);
+        float v = std::sqrt((G * bhMass) / dist);
+        Vector3 offVel = { -v * (offPos.y / dist), v * (offPos.x / dist), 0.0f };
 
-        double vx = centerVel.x - v * (dy / dist);
-        double vy = centerVel.y + v * (dx / dist);
-        double vz = centerVel.z;
+        if (!isFirst) {
+            offPos = Vector3RotateByAxisAngle(offPos, axis, tilt2);
+            offVel = Vector3RotateByAxisAngle(offVel, axis, tilt2);
+        }else{
+            offPos = Vector3RotateByAxisAngle(offPos, axis, tilt1);
+            offVel = Vector3RotateByAxisAngle(offVel, axis, tilt1);
+        }
 
-        cstl[i] = Body(0.01, {px, py, pz}, {vx, vy, vz}, {0,0,0}, WHITE);
+        Vec3d p  = { centerPos.x + offPos.x, centerPos.y + offPos.y, centerPos.z + offPos.z };
+        Vec3d vv = { centerVel.x + offVel.x, centerVel.y + offVel.y, centerVel.z + offVel.z };
+
+        cstl[i] = Body(0.01, p, vv, {0,0,0}, WHITE);
     }
 }
-
 #endif
