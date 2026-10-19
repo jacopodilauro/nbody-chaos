@@ -5,8 +5,8 @@
 
 #include "body.h"
 #include "sim.h"
-#define WIDTH 1500 
-#define HEIGHT 800
+#define WIDTH 1920 //1920x1080 
+#define HEIGHT 1000
 #define OFFA -100
 #define OFFB 100
 #define V_MIN -40
@@ -18,6 +18,7 @@ int main(int argc, char* argv[]){
     uint skipFrame = 3;
     bool is3D = false;
     bool sizetmp = false;
+    bool showFPS = false;
     std::string modeCstl = "default";
 
     for (int i = 1; i < argc; ++i) {
@@ -26,6 +27,8 @@ int main(int argc, char* argv[]){
             is3D = true;
         } else if (arg == "-GlxCl") {
             modeCstl = "GlxCl";
+        }else if (arg == "-fps") {
+            showFPS = true;
         }else if (arg == "--seed") {
             if (i + 1 >= argc) {
                 std::cerr << "Missing value for --seed\n";
@@ -38,7 +41,7 @@ int main(int argc, char* argv[]){
                 return 1;
             }
         }else if (arg == "-h" || arg == "--help") {
-            std::cout << "Use: program <number of bodies> [-3D] [-GlxCl]\n";
+            std::cout << "Use: program <number of bodies> [-3D] [-GlxCl] [-fps] [--seed N]\n";
             return 0;
         } else if (!arg.empty() && arg[0] == '-') {
             std::cerr << "Unknown flag: " << arg << '\n';
@@ -64,7 +67,7 @@ int main(int argc, char* argv[]){
     if(modeCstl == "GlxCl") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed);
     else InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
     
-    Camera3D camera = { { WIDTH/2.0f, HEIGHT/2.0f + 200.0f, 700.0f },
+    Camera3D camera = { { WIDTH/2.0f-400, HEIGHT/2.0f + 200.0f, 700.0f },
                         { WIDTH/2, HEIGHT/2, 0/*static_cast<float>(costellation[0].pos.x), static_cast<float>(costellation[0].pos.y), static_cast<float>(costellation[0].pos.z)*/ },            
                         { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE };
     
@@ -92,7 +95,8 @@ int main(int argc, char* argv[]){
 
         BeginDrawing();
             ClearBackground(BLACK);
-            DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
+            
+            if(showFPS) DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
 
             if (!is3D) {
                 DrawBodies2(costellation);

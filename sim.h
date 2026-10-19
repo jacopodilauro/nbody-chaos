@@ -65,12 +65,12 @@ void UpdateState(std::vector<Body> &cstl, float dt){
 
         if (cstl[i].mass < 1.0) {
             double speed = std::sqrt(cstl[i].vel.x*cstl[i].vel.x + cstl[i].vel.y*cstl[i].vel.y + cstl[i].vel.z*cstl[i].vel.z);
-            float s = std::min(1.0f, static_cast<float>(speed / 600.0));
+            float s = std::min(1.0f, static_cast<float>(speed / 1300.0));
             cstl[i].color = Color{
                 static_cast<unsigned char>(45 + 210 * s * s),
                 static_cast<unsigned char>(30 + 215 * s),
                 static_cast<unsigned char>(130 + 125 * s),
-                180
+                255
             };
         }
     }
@@ -80,7 +80,7 @@ void UpdateTrail(std::vector<Body> &cstl){
     size_t l = cstl.size();
     for(size_t i = 0; i < l; i++){
         cstl[i].trail.push_back({static_cast<float>(cstl[i].pos.x), static_cast<float>(cstl[i].pos.y), static_cast<float>(cstl[i].pos.z)});
-        if(cstl[i].trail.size() > 50){
+        if(cstl[i].trail.size() > 25){
             //cstl[i].trail.erase(cstl[i].trail.begin(), cstl[i].trail.begin() + 100);
             cstl[i].trail.erase(cstl[i].trail.begin());
         }   
