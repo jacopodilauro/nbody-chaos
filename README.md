@@ -1,8 +1,15 @@
+
+
+
+
+
+
 # N body Simulation 
 
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
-<video src="media/galaxy2D.mp4" autoplay loop muted playsinline width="100%"></video>
+https://github.com/user-attachments/assets/69e3ff40-1429-4250-bd3a-e57a0091bad4
+
 ## Build
 
 ```shell
