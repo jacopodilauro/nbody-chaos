@@ -3,7 +3,7 @@
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
 <p align="center">
-  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" />
+  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" width="500"/>
 </p>
 
 ## Build
@@ -46,6 +46,13 @@ make -C build galaxy2
 
 Press `Space` to switch between 2D and 3D.
 
+
+<style>
+  table img {
+    width: 350px;
+    height: auto; 
+  }
+</style>
 ## Examples
 
 | Code | Example |
