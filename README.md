@@ -2,7 +2,9 @@
 
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
-![Gif galaxy](media/Galaxy2D_3MB.gif)
+<p align="center">
+  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" />
+</p>
 
 ## Build
 
@@ -19,7 +21,7 @@ g++ main.cpp -O2 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 ```shell
 # running cmake
 make -C build run ARGS="[OPTIONS]"
-# or classic c++
+# or classic c
 ./nbody [OPTIONS] #for Win nbody.exe [OPTIONS]
 
 # demo 1
@@ -46,12 +48,15 @@ Press `Space` to switch between 2D and 3D.
 
 ## Examples
 
-```shell
-./nbody 4000 #1
-./nbody -GlxCl -blend --seed 34 -fps 2000 #2
-./nbody 1000 -GlxCl -blend -3D --g2tilt 90 #3
-make -C build galaxy1 #4
-```
+| Code | Example |
+|:-|:-:|
+|```./nbody 3000```|![](media/nbody3000.png)|
+|```./nbody -GlxCl -blend --seed 34 -fps 2000```|![](media/img2D.png)|
+|```make -C build run ARGS="-blend 10"```|![](media/img10.png)|
+|```./nbody 1000 -GlxCl -blend -3D --g2tilt 90```|![](media/img3d-n.jpeg)|
+|```make -C build galaxy1```|![](media/cmakeG1.png)|
+|```...```||
+
 
 ## How it works
 
