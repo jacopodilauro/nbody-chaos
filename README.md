@@ -71,7 +71,9 @@ $$
 \mathbf{v}_i \leftarrow \mathbf{v}_i + \mathbf{a}_i \, \Delta t, \qquad \mathbf{r}_i \leftarrow \mathbf{r}_i + \mathbf{v}_i \, \Delta t
 $$
 
-$G$ and $\varepsilon$ are in simulation units (`G = 500`, `eps = 20`), not real-world values. In galaxy mode stars are massless test particles: only the two central black holes attract.
+$G$ and $\varepsilon$ are in simulation units (`G = 500`, `eps = 20`), not real-world values. In galaxy mode stars are massless test particles: only the two central black holes attract
+
+Decreasing $\varepsilon$ reduces gravitational softening, making gravitational forces much stronger at close distances. This leads to more extreme encounters and chaotic trajectories. Larger values produce smoother, more stable simulations.
 
 ## Credits
 
