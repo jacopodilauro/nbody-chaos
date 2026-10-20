@@ -3,7 +3,7 @@
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
 <p align="center">
-  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" width="500"/>
+  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" width="400"/>
 </p>
 
 ## Build
@@ -46,24 +46,16 @@ make -C build galaxy2
 
 Press `Space` to switch between 2D and 3D.
 
-
-<style>
-  table img {
-    width: 350px;
-    height: auto; 
-  }
-</style>
 ## Examples
 
 | Code | Example |
 |:-|:-:|
-|```./nbody 3000```|![](media/nbody3000.png)|
-|```./nbody -GlxCl -blend --seed 34 -fps 2000```|![](media/img2D.png)|
-|```make -C build run ARGS="-blend 10"```|![](media/img10.png)|
-|```./nbody 1000 -GlxCl -blend -3D --g2tilt 90```|![](media/img3d-n.jpeg)|
-|```make -C build galaxy1```|![](media/cmakeG1.png)|
+|```./nbody 3000```|<img src="media/nbody3000.png" width=400px>|
+|```./nbody -GlxCl -blend --seed 34 -fps 2000```|<img src="media/img2D.png" width=400px>|
+|```make -C build run ARGS="-blend 10"```|<img src="media/img10.png" width=400px>|
+|```./nbody 1000 -GlxCl -blend -3D --g2tilt 90```|<img src="media/img3d-n.jpeg" width=400px>|
+|```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
 |```...```||
-
 
 ## How it works
 
