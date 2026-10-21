@@ -59,21 +59,25 @@ Press `Space` to switch between 2D and 3D.
 
 ## How it works
 
-Each body feels the gravitational pull of every other body, with a softening term $\varepsilon$ to avoid infinite forces when two bodies get too close:
+Each body feels the gravitational pull of every other body, with a softening term $\varepsilon$ to avoid infinite forces when two bodies get too close
+
+Decreasing $\varepsilon$ makes gravitational force much stronger in close distance, this leads to more extreme encounters and chaotic trajectories.
 
 $$
 \mathbf{a}_i = \sum_{j \neq i} \frac{G \, m_j \, (\mathbf{r}_j - \mathbf{r}_i)}{\left(|\mathbf{r}_j - \mathbf{r}_i|^2 + \varepsilon^2\right)^{3/2}}
 $$
 
+$G$ and $\varepsilon$ are in simulation units, not real-world values.
+
+
 Velocities and positions are then updated with semi-implicit Euler integration:
 
 $$
-\mathbf{v}_i \leftarrow \mathbf{v}_i + \mathbf{a}_i \, \Delta t, \qquad \mathbf{r}_i \leftarrow \mathbf{r}_i + \mathbf{v}_i \, \Delta t
+\mathbf{v}(t+ \Delta t)_i = \mathbf{v}(t)_i + \mathbf{a}(t)_i \, \Delta t \qquad | \qquad \mathbf{p}(t+ \Delta t)_i = \mathbf{p}(t)_i + \mathbf{v}(t)_i \, \Delta t
 $$
 
-$G$ and $\varepsilon$ are in simulation units (`G = 500`, `eps = 20`), not real-world values. In galaxy mode stars are massless test particles: only the two central black holes attract
 
-Decreasing $\varepsilon$ reduces gravitational softening, making gravitational forces much stronger at close distances. This leads to more extreme encounters and chaotic trajectories. Larger values produce smoother, more stable simulations.
+The simulation supports two solver algorithm: the exact ***Direct Particle-Particle*** method with $\mathcal{O}(N^2)$ complexity, and the ***Barnes-Hut octree*** approximation, which groups distant bodies by their center of mass to reduce complexity to $\mathcal{O}(N \log N)$.
 
 ## Credits
 
