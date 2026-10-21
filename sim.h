@@ -1,6 +1,10 @@
 #ifndef SIM_H
 #define SIM_H
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <raylib.h>
 #include <raymath.h>
 #include <iostream>
@@ -28,10 +32,17 @@ void InitNBodies(std::vector<Body> &cstl, float WIDTH, float HEIGHT, int seed, f
 }
 
 void UpdateState(std::vector<Body> &cstl, float dt){
+
+    #ifdef _OPENMP
+    #pragma omp parallel for
+    #endif
     for (size_t i = 0; i < cstl.size(); ++i) {
         cstl[i].acc = Vec3d{0.0f, 0.0f, 0.0f};
     }
 
+    #ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic)
+    #endif
     for(size_t i = 0; i < cstl.size(); i++){
         for(size_t j = 0; j < cstl.size(); j++){
             if (cstl[j].mass < 1.0) continue;
@@ -51,6 +62,9 @@ void UpdateState(std::vector<Body> &cstl, float dt){
         }
     }
     
+    #ifdef _OPENMP
+    #pragma omp parallel for
+    #endif
     for(size_t i = 0; i < cstl.size(); i++){
         cstl[i].vel.x += cstl[i].acc.x * dt;
         cstl[i].vel.y += cstl[i].acc.y * dt;
