@@ -27,7 +27,7 @@ add_custom_target(run
 )
 
 add_custom_target(galaxy1
-    COMMAND $<TARGET_FILE:nbody> -GlxCl -blend --g2tilt 25 2000
+    COMMAND $<TARGET_FILE:nbody> -GlxCl -blend --g2tilt 25 3000
     DEPENDS nbody
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

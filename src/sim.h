@@ -37,7 +37,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
     #pragma omp parallel for
     #endif
     for (size_t i = 0; i < cstl.size(); ++i) {
-        cstl[i].acc = Vec3d{0.0f, 0.0f, 0.0f};
+        cstl[i].m_acc = Vec3d{0.0f, 0.0f, 0.0f};
     }
 
     #ifdef _OPENMP
@@ -45,19 +45,19 @@ void UpdateState(std::vector<Body> &cstl, float dt){
     #endif
     for(size_t i = 0; i < cstl.size(); i++){
         for(size_t j = 0; j < cstl.size(); j++){
-            if (cstl[j].mass < 1.0) continue;
+            if (cstl[j].m_mass < 1.0) continue;
             if(i != j){
-                double dx = cstl[j].pos.x - cstl[i].pos.x;
-                double dy = cstl[j].pos.y - cstl[i].pos.y;
-                double dz = cstl[j].pos.z - cstl[i].pos.z; 
+                double dx = cstl[j].m_pos.x - cstl[i].m_pos.x;
+                double dy = cstl[j].m_pos.y - cstl[i].m_pos.y;
+                double dz = cstl[j].m_pos.z - cstl[i].m_pos.z; 
 
                 double distSqr = dx*dx + dy*dy + dz*dz + eps*eps;
                 double dist = std::sqrt(distSqr);
-                double factor_i = (G * (double)cstl[j].mass) / (distSqr * dist);
+                double factor_i = (G * (double)cstl[j].m_mass) / (distSqr * dist);
                 
-                cstl[i].acc.x += factor_i * dx;
-                cstl[i].acc.y += factor_i * dy;
-                cstl[i].acc.z += factor_i * dz;
+                cstl[i].m_acc.x += factor_i * dx;
+                cstl[i].m_acc.y += factor_i * dy;
+                cstl[i].m_acc.z += factor_i * dz;
             }
         }
     }
@@ -66,13 +66,13 @@ void UpdateState(std::vector<Body> &cstl, float dt){
     #pragma omp parallel for
     #endif
     for(size_t i = 0; i < cstl.size(); i++){
-        cstl[i].vel.x += cstl[i].acc.x * dt;
-        cstl[i].vel.y += cstl[i].acc.y * dt;
-        cstl[i].vel.z += cstl[i].acc.z * dt;
+        cstl[i].m_vel.x += cstl[i].m_acc.x * dt;
+        cstl[i].m_vel.y += cstl[i].m_acc.y * dt;
+        cstl[i].m_vel.z += cstl[i].m_acc.z * dt;
         
-        cstl[i].pos.x += cstl[i].vel.x * dt;
-        cstl[i].pos.y += cstl[i].vel.y * dt;
-        cstl[i].pos.z += cstl[i].vel.z * dt;
+        cstl[i].m_pos.x += cstl[i].m_vel.x * dt;
+        cstl[i].m_pos.y += cstl[i].m_vel.y * dt;
+        cstl[i].m_pos.z += cstl[i].m_vel.z * dt;
     }
 }
 
@@ -80,18 +80,18 @@ void UpdateGalaxyColor(std::vector<Body> &cstl){
     size_t m = cstl.size() / 2; 
     
     for(size_t i = 0; i < cstl.size(); i++){
-        if (cstl[i].mass < 1.0) {
-            double speed = std::sqrt(cstl[i].vel.x*cstl[i].vel.x + cstl[i].vel.y*cstl[i].vel.y + cstl[i].vel.z*cstl[i].vel.z);
+        if (cstl[i].m_mass < 1.0) {
+            double speed = std::sqrt(cstl[i].m_vel.x*cstl[i].m_vel.x + cstl[i].m_vel.y*cstl[i].m_vel.y + cstl[i].m_vel.z*cstl[i].m_vel.z);
             float s = std::min(1.0f, static_cast<float>(speed / 1300.0));
             if(i < m){
-                cstl[i].color = Color{
+                cstl[i].m_color = Color{
                     static_cast<unsigned char>(45 + 210 * s * s),
                     static_cast<unsigned char>(30 + 215 * s),
                     static_cast<unsigned char>(130 + 125 * s),
                     255
                 };
             }else{    
-                cstl[i].color = Color{
+                cstl[i].m_color = Color{
                     static_cast<unsigned char>(100 + 155 * s),
                     static_cast<unsigned char>(20 + 70 * s * s),
                     static_cast<unsigned char>(140 - 50 * s),
@@ -105,9 +105,9 @@ void UpdateGalaxyColor(std::vector<Body> &cstl){
 void UpdateTrail(std::vector<Body> &cstl){
     size_t l = cstl.size();
     for(size_t i = 0; i < l; i++){
-        cstl[i].trail.push_back({static_cast<float>(cstl[i].pos.x), static_cast<float>(cstl[i].pos.y), static_cast<float>(cstl[i].pos.z)});
-        if(cstl[i].trail.size() > 25){
-            cstl[i].trail.erase(cstl[i].trail.begin());
+        cstl[i].m_trail.push_back({static_cast<float>(cstl[i].m_pos.x), static_cast<float>(cstl[i].m_pos.y), static_cast<float>(cstl[i].m_pos.z)});
+        if(cstl[i].m_trail.size() > 25){
+            cstl[i].m_trail.erase(cstl[i].m_trail.begin());
         }   
     }
 }

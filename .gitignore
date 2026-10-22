@@ -1,6 +1,6 @@
-nbody
-nbody_omp
-nbody_serial
-*.out
-build/
+src/nbody
+src/nbody_omp
+src/nbody_serial
+src/build/
+
 media/galaxy2D.mp4
