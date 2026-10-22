@@ -23,7 +23,7 @@ class Body{
             mass (m), pos (p), vel (v), acc (a), color (c) {}
 
         void draw2D(){
-            DrawCircle(pos.x, pos.y, 5, color);
+            DrawCircle(pos.x, pos.y, 1, color);
         }
 
         void drawTrail2D(){

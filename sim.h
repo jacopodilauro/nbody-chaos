@@ -41,7 +41,7 @@ void UpdateState(std::vector<Body> &cstl, float dt){
     }
 
     #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for //schedule(dynamic)
     #endif
     for(size_t i = 0; i < cstl.size(); i++){
         for(size_t j = 0; j < cstl.size(); j++){
@@ -114,7 +114,7 @@ void UpdateTrail(std::vector<Body> &cstl){
 
 void DrawBodies2(std::vector<Body> &cstl){
     for (Body& body : cstl) {
-        body.drawTrail2D();
+        //body.drawTrail2D();
         body.draw2D();
     }
 }
