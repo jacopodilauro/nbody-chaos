@@ -1,18 +1,12 @@
 #ifndef SIM_H
 #define SIM_H
 
-#if defined(_OPENMP) && !defined(NO_SIMD)
-  #define PAR_LOOP _Pragma("omp parallel for simd schedule(static)")   // core + SIMD
-#elif defined(_OPENMP)
-  #define PAR_LOOP _Pragma("omp parallel for schedule(static)")        // solo core
+#if defined(USE_OMP)
+  #define OMP_PARALLEL_FOR      _Pragma("omp parallel for schedule(static)")
+  #define OMP_PARALLEL_FOR_SIMD _Pragma("omp parallel for simd schedule(static)")
 #else
-  #define PAR_LOOP _Pragma("omp simd")                                 // solo SIMD (o niente)
-#endif
-
-#ifdef _OPENMP
-  #define PAR_FOR _Pragma("omp parallel for schedule(static)")
-#else
-  #define PAR_FOR
+  #define OMP_PARALLEL_FOR
+  #define OMP_PARALLEL_FOR_SIMD _Pragma("omp simd")
 #endif
 
 #include <raylib.h>
@@ -48,9 +42,9 @@ void UpdateState(Bodies &cstl, float dt){
     const size_t size = cstl.count; 
 
     const double* __restrict l_m = cstl.mass.data();
-    const double* __restrict l_px = cstl.pos_x.data();
-    const double* __restrict l_py = cstl.pos_y.data();
-    const double* __restrict l_pz = cstl.pos_z.data();
+    double* __restrict l_px = cstl.pos_x.data();
+    double* __restrict l_py = cstl.pos_y.data();
+    double* __restrict l_pz = cstl.pos_z.data();
 
     double* __restrict l_ax = cstl.acc_x.data();
     double* __restrict l_ay = cstl.acc_y.data();
@@ -59,14 +53,14 @@ void UpdateState(Bodies &cstl, float dt){
     double* __restrict l_vy = cstl.vel_y.data();
     double* __restrict l_vz = cstl.vel_z.data();
 
-    PAR_LOOP
+    OMP_PARALLEL_FOR
     for (size_t i = 0; i < size; i++) {
         const double xi = l_px[i];
         const double yi = l_py[i];
         const double zi = l_pz[i];
         double ax = 0, ay = 0, az = 0; 
 
-        
+        #pragma omp simd reduction(+:ax, ay, az)
         for(size_t j = 0; j < size; j++){
 
             double dx = l_px[j] - xi;
@@ -86,19 +80,15 @@ void UpdateState(Bodies &cstl, float dt){
         l_az[i] = az;
     }
     
-    double* __restrict px_next = cstl.pos_x.data();
-    double* __restrict py_next = cstl.pos_y.data();
-    double* __restrict pz_next = cstl.pos_z.data();
-    
-    PAR_LOOP
+    OMP_PARALLEL_FOR_SIMD
     for (size_t i = 0; i < size; i++) {
         l_vx[i] += l_ax[i] * dt;
         l_vy[i] += l_ay[i] * dt;
         l_vz[i] += l_az[i] * dt;
 
-        px_next[i] += l_vx[i] * dt;
-        py_next[i] += l_vy[i] * dt;
-        pz_next[i] += l_vz[i] * dt;
+        l_px[i] += l_vx[i] * dt;
+        l_py[i] += l_vy[i] * dt;
+        l_pz[i] += l_vz[i] * dt;
     }
 }
 
@@ -106,7 +96,7 @@ void UpdateGalaxyColor(Bodies &cstl){
     size_t n = cstl.count;
     size_t m = n / 2; 
     
-    PAR_FOR   
+    OMP_PARALLEL_FOR   
     for(size_t i = 0; i < n; i++){
         if (cstl.mass[i] < 1.0) {
             double l_vx = cstl.vel_x[i], l_vy = cstl.vel_y[i], l_vz = cstl.vel_z[i];
@@ -134,7 +124,7 @@ void UpdateGalaxyColor(Bodies &cstl){
 void UpdateTrail(Bodies &cstl){
     size_t l = cstl.count;
     
-    PAR_FOR   
+    OMP_PARALLEL_FOR   
     for(size_t i = 0; i < l; i++){
         cstl.trail[i].push_back({static_cast<float>(cstl.pos_x[i]), static_cast<float>(cstl.pos_y[i]), static_cast<float>(cstl.pos_z[i])});
         if(cstl.trail[i].size() > 25){

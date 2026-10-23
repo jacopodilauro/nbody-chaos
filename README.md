@@ -32,7 +32,7 @@ g++ main.cpp -O3 -o nbody -march=native -ffast-math -fopenmp -lraylib -lGL -lm -
 
 ```
 
-The number of threads can be limited at runtime with `OMP_NUM_THREADS=4 ./nbody`.
+The number of threads can be limited at runtime with `OMP_NUM_THREADS=4 ./nbody [...]`.
 
 ## Usage
 

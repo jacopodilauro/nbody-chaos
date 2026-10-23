@@ -13,19 +13,20 @@ find_package(raylib REQUIRED)
 
 add_executable(nbody main.cpp)
 
-set(PARALLEL "BOTH" CACHE STRING "NONE, SIMD, OMP, BOTH")
+# SIMD sempre attivo, OpenMP (multi-core) opzionale: -DOMP=ON per attivarlo
+option(OMP "Abilita il multithreading con OpenMP" OFF)
+message(STATUS "OpenMP multi-core: ${OMP}")
 
-if(PARALLEL STREQUAL "OMP" OR PARALLEL STREQUAL "BOTH")
+if(OMP)
     find_package(OpenMP REQUIRED)
     target_link_libraries(nbody PRIVATE OpenMP::OpenMP_CXX)
-endif()
-
-if(PARALLEL STREQUAL "OMP")
-    target_compile_definitions(nbody PRIVATE NO_SIMD)
-endif()
-
-if(PARALLEL STREQUAL "SIMD" AND NOT MSVC)
-    target_compile_options(nbody PRIVATE -fopenmp-simd)
+    target_compile_definitions(nbody PRIVATE USE_OMP)
+else()
+    if(MSVC)
+        target_compile_options(nbody PRIVATE /openmp:experimental)
+    else()
+        target_compile_options(nbody PRIVATE -fopenmp-simd)
+    endif()
 endif()
 
 if(MSVC)

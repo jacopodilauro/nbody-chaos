@@ -12,6 +12,8 @@
 #define V_MIN -40
 #define V_MAX 40
 
+constexpr float DT = 1.0f / 240.0f;
+
 int main(int argc, char* argv[]){
     unsigned int size = 3;
     unsigned int seed = 4;
@@ -129,7 +131,7 @@ int main(int argc, char* argv[]){
         }
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
 
-        UpdateState(costellation, GetFrameTime() * 0.25f);
+        UpdateState(costellation, DT);
         UpdateGalaxyColor(costellation);
         //UpdateTrail(costellation);
         if(is3D){
