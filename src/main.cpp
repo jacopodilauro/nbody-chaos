@@ -88,6 +88,10 @@ int main(int argc, char* argv[]){
         } else if (!sizetmp) {
             try {
                 size = std::stoi(arg);
+                if (size < 1) { 
+                    std::cerr << "Number of bodies must be at least 1\n"; 
+                    return 1; 
+                }
                 sizetmp = true;
             } catch (...) {
                 std::cerr << "Invalid number\n";
@@ -101,7 +105,7 @@ int main(int argc, char* argv[]){
 
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
-    std::vector<Body> costellation(size);
+    Bodies costellation(size);
 
     if(modeCstl == "GlxCl") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed, g1tilt, g2tilt);
     else InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
@@ -127,7 +131,7 @@ int main(int argc, char* argv[]){
 
         UpdateState(costellation, GetFrameTime() * 0.25f);
         UpdateGalaxyColor(costellation);
-        UpdateTrail(costellation);
+        //UpdateTrail(costellation);
         if(is3D){
             if(skipFrame > 0) skipFrame--;
             else UpdateCamera(&camera, CAMERA_FREE);
@@ -140,13 +144,13 @@ int main(int argc, char* argv[]){
 
             if (!is3D) {
                 if (useBlend) BeginBlendMode(BLEND_ADDITIVE);
-                    DrawBodies2(costellation);
+                    costellation.draw2D();
                 if (useBlend) EndBlendMode();
             } else {
                 BeginMode3D(camera);
                     DrawCustomGrid(Vector3{ WIDTH / 2.0f, (HEIGHT / 2.0f) - 150.0f, 0.0f }, 50, 15.0f);
                     if (useBlend) BeginBlendMode(BLEND_ADDITIVE);
-                        DrawBodies3(costellation);
+                        costellation.draw3D();
                     if (useBlend) EndBlendMode();
                 EndMode3D();
             }

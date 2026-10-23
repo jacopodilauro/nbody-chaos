@@ -10,12 +10,30 @@ Gravitational N-body simulation in C++ with [raylib](#credits), from the three-b
 
 ```shell
 # cmake
-cmake -B build
+cmake -B build -DPARALLEL=BOTH
 cmake --build build
-
-# or if you don't like cmake (linux only) 
-g++ main.cpp -O2 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 ```
+
+`PARALLEL` selects how the simulation is accelerated:
+
+| Mode | OMP | SIMD | g++ flags |
+|:-|:-:|:-:|:-|
+| `NONE` | N | N | *(none)* |
+| `SIMD` | N | Y | `-fopenmp-simd` |
+| `OMP` | Y | N | `-fopenmp -DNO_SIMD` |
+| `BOTH` *(default)* | Y | Y | `-fopenmp` |
+
+If you don't like cmake (linux only), use this + flags:
+
+```shell
+g++ main.cpp -O3 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+# for max performance 
+g++ main.cpp -O3 -o nbody -march=native -ffast-math -fopenmp -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+
+```
+
+The number of threads can be limited at runtime with `OMP_NUM_THREADS=4 ./nbody`.
+
 ## Usage
 
 ```shell
@@ -73,11 +91,11 @@ $G$ and $\varepsilon$ are in simulation units, not real-world values.
 Velocities and positions are then updated with semi-implicit Euler integration:
 
 $$
-\mathbf{v}(t+ \Delta t)_i = \mathbf{v}(t)_i + \mathbf{a}(t)_i \, \Delta t \qquad | \qquad \mathbf{p}(t+ \Delta t)_i = \mathbf{p}(t)_i + \mathbf{v}(t)_i \, \Delta t
+\mathbf{v}(t+ \Delta t)_i = \mathbf{v}_i + \mathbf{a}_i \, \Delta t \qquad | \qquad \mathbf{p}(t+ \Delta t)_i = \mathbf{p}_i + \mathbf{v}_i \, \Delta t
 $$
 
 
-The simulation supports two solver algorithm: the exact ***Direct Particle-Particle*** method with $\mathcal{O}(N^2)$ complexity, and the ***Barnes-Hut octree*** approximation, which groups distant bodies by their center of mass to reduce complexity to $\mathcal{O}(N \log N)$.
+The simulation supports two solver algorithm: the exact ***Direct Particle-Particle*** method with $\mathcal{O}(N^2)$ complexity, and the ***Barnes-Hut octree*** approximation (planned...), which groups distant bodies by their center of mass to reduce complexity to $\mathcal{O}(N \log N)$.
 
 ## Credits
 

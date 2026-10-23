@@ -13,7 +13,29 @@ find_package(raylib REQUIRED)
 
 add_executable(nbody main.cpp)
 
+set(PARALLEL "BOTH" CACHE STRING "NONE, SIMD, OMP, BOTH")
+
+if(PARALLEL STREQUAL "OMP" OR PARALLEL STREQUAL "BOTH")
+    find_package(OpenMP REQUIRED)
+    target_link_libraries(nbody PRIVATE OpenMP::OpenMP_CXX)
+endif()
+
+if(PARALLEL STREQUAL "OMP")
+    target_compile_definitions(nbody PRIVATE NO_SIMD)
+endif()
+
+if(PARALLEL STREQUAL "SIMD" AND NOT MSVC)
+    target_compile_options(nbody PRIVATE -fopenmp-simd)
+endif()
+
+if(MSVC)
+    target_compile_options(nbody PRIVATE /O2 /arch:AVX2 /fp:fast)
+else()
+    target_compile_options(nbody PRIVATE -O3 -march=native -ffast-math)
+endif()
+
 target_link_libraries(nbody PRIVATE raylib)
+
 if(UNIX AND NOT APPLE)
     target_link_libraries(nbody PRIVATE m)
 endif()
