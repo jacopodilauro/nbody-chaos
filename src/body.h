@@ -48,14 +48,18 @@ struct Bodies{
     void draw2D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail2D(trail[i], i);
-            DrawCircle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 1.0f, color[i]);
+            //DrawCircle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 1.0f, color[i]);
+            //DrawRectangle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 1, 1, color[i]);
+            DrawPixel(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), color[i]);
         }
     }
 
     void draw3D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail3D(trail[i], i);
-            DrawSphere({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 5.0f, color[i]);
+            //DrawSphere({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 1.0f, color[i]);
+            DrawCube({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 1.0f, 1.0f, 1.0f, color[i]);  
+            //DrawPoint3D({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, color[i]); 
         }
     }
 };

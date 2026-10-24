@@ -131,6 +131,7 @@ int main(int argc, char* argv[]){
         }
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
 
+        //UpdateState(costellation, GetFrameTime() * 0.25);
         UpdateState(costellation, DT);
         UpdateGalaxyColor(costellation);
         //UpdateTrail(costellation);

@@ -11,7 +11,7 @@ endif()
 
 find_package(raylib REQUIRED)
 
-add_executable(nbody main.cpp)
+add_executable(nbody src/main.cpp)
 
 # SIMD sempre attivo, OpenMP (multi-core) opzionale: -DOMP=ON per attivarlo
 option(OMP "Abilita il multithreading con OpenMP" OFF)
@@ -42,6 +42,7 @@ if(UNIX AND NOT APPLE)
 endif()
 
 set_target_properties(nbody PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
 
 add_custom_target(run
     COMMAND $<TARGET_FILE:nbody> $$ARGS

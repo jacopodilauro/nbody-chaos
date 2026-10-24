@@ -1,6 +1,4 @@
-src/nbody
-src/nbody_omp
-src/nbody_serial
-src/build/
-
+nbody
+build/
+todo.md
 media/galaxy2D.mp4
