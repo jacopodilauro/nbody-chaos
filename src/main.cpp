@@ -51,9 +51,7 @@ int main(int argc, char* argv[]){
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
 
         //UpdateState(costellation, GetFrameTime() * 0.25);
-        double t0 = GetTime();
-            UpdateState(costellation, DT);
-        double t1 = GetTime();
+        UpdateState(costellation, DT);
         UpdateGalaxyColor(costellation);
         //UpdateTrail(costellation);
         if(cfg.is3D){
@@ -79,9 +77,6 @@ int main(int argc, char* argv[]){
                 EndMode3D();
             }
         EndDrawing();
-        double t2 = GetTime();
-        if (showFPS) std::cout << "fisica: " << (t1 - t0) * 1000 << " ms   disegno+resto: "
-                            << (t2 - t1) * 1000 << " ms\n";
     }
     CloseWindow();
     return 0;    
