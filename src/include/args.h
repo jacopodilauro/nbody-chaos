@@ -7,8 +7,8 @@
 struct Config {
     unsigned int size = 3;
     unsigned int seed = 4;
-    float g1tilt = 0;
-    float g2tilt = 0;
+    float tilt1 = 0;
+    float tilt2 = 0;
     bool is3D = false;
     bool showFPS = false;
     bool useBlend = false;
@@ -26,7 +26,7 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             cfg.modeCstl = "glxy";
         } else if (arg == "-fps") {
             cfg.showFPS = true;
-        } else if (arg == "-blend") {
+        } else if (arg == "-blend" | arg == "-b") {
             cfg.useBlend = true;
         } else if (arg == "--seed") {
             if (i + 1 >= argc) {
@@ -41,22 +41,22 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             }
         } else if (arg == "--tilt1") {
             if (i + 1 >= argc) {
-                std::cerr << "Missing value for --g1tilt\n";
+                std::cerr << "Missing value for --tilt1\n";
                 return 1;
             }
             try {
-                cfg.g1tilt = std::stof(argv[++i]);
+                cfg.tilt1 = std::stof(argv[++i]);
             } catch (...) {
                 std::cerr << "Invalid inclination\n";
                 return 1;
             }
         } else if (arg == "--tilt2") {
             if (i + 1 >= argc) {
-                std::cerr << "Missing value for --g2tilt\n";
+                std::cerr << "Missing value for --tilt2\n";
                 return 1;
             }
             try {
-                cfg.g2tilt = std::stof(argv[++i]);
+                cfg.tilt2 = std::stof(argv[++i]);
             } catch (...) {
                 std::cerr << "Invalid inclination\n";
                 return 1;
@@ -67,11 +67,11 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             std::cout << "  NUMBER_OF_BODIES     Number of celestial bodies (optional, default: 3)\n\n";
             std::cout << "Options:\n";
             std::cout << "  -3D                  Enable 3D visualization\n";
-            std::cout << "  -glxy               Enable galaxy collision mode\n";
+            std::cout << "  -glxy                Enable galaxy collision mode\n";
             std::cout << "  -fps                 Show FPS on screen\n";
-            std::cout << "  -blend               Enable additive blending mode\n";
-            std::cout << "  --g1tilt <DEG>       Tilt angle for the first galaxy (in degrees)\n";
-            std::cout << "  --g2tilt <DEG>       Tilt angle for the second galaxy (in degrees)\n";
+            std::cout << "  -blend | -b          Enable blending mode\n";
+            std::cout << "  --tilt1 <DEG>        Tilt angle for the first galaxy (in degrees)\n";
+            std::cout << "  --tilt2 <DEG>        Tilt angle for the second galaxy (in degrees)\n";
             std::cout << "  --seed <N>           Set the seed for random generation\n";
             std::cout << "  -h, --help           Show this help message\n";
             return 0;

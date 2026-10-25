@@ -31,16 +31,16 @@ void UpdateState(Bodies &cstl, float dt){
     const size_t size = cstl.count; 
 
     const double* __restrict l_m = cstl.mass.data();
-    double* __restrict l_px = cstl.pos_x.data();
-    double* __restrict l_py = cstl.pos_y.data();
-    double* __restrict l_pz = cstl.pos_z.data();
+    float* __restrict l_px = cstl.pos_x.data();
+    float* __restrict l_py = cstl.pos_y.data();
+    float* __restrict l_pz = cstl.pos_z.data();
 
-    double* __restrict l_ax = cstl.acc_x.data();
-    double* __restrict l_ay = cstl.acc_y.data();
-    double* __restrict l_az = cstl.acc_z.data();
-    double* __restrict l_vx = cstl.vel_x.data();
-    double* __restrict l_vy = cstl.vel_y.data();
-    double* __restrict l_vz = cstl.vel_z.data();
+    float* __restrict l_ax = cstl.acc_x.data();
+    float* __restrict l_ay = cstl.acc_y.data();
+    float* __restrict l_az = cstl.acc_z.data();
+    float* __restrict l_vx = cstl.vel_x.data();
+    float* __restrict l_vy = cstl.vel_y.data();
+    float* __restrict l_vz = cstl.vel_z.data();
 
     OMP_PARALLEL_FOR
     for (size_t i = 0; i < size; i++) {
@@ -115,7 +115,7 @@ void UpdateTrail(Bodies &cstl){
     
     OMP_PARALLEL_FOR   
     for(size_t i = 0; i < l; i++){
-        cstl.trail[i].push_back({static_cast<float>(cstl.pos_x[i]), static_cast<float>(cstl.pos_y[i]), static_cast<float>(cstl.pos_z[i])});
+        cstl.trail[i].push_back({cstl.pos_x[i], cstl.pos_y[i], cstl.pos_z[i]});
         if(cstl.trail[i].size() > 25){
             cstl.trail[i].erase(cstl.trail[i].begin());
         }   

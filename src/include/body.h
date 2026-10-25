@@ -9,9 +9,9 @@ struct Bodies{
     size_t count = 0;
 
     std::vector<double> mass;
-    std::vector<double> pos_x, pos_y, pos_z;
-    std::vector<double> vel_x, vel_y, vel_z;
-    std::vector<double> acc_x, acc_y, acc_z;
+    std::vector<float> pos_x, pos_y, pos_z;
+    std::vector<float> vel_x, vel_y, vel_z;
+    std::vector<float> acc_x, acc_y, acc_z;
 
     std::vector<Color> color;
     std::vector<std::vector<Vector3>> trail;

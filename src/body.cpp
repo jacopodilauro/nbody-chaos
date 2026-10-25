@@ -44,8 +44,8 @@ void Bodies::draw2D() const {
 void Bodies::draw3D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail3D(trail[i], i);
-            //DrawSphere({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 1.0f, color[i]);
-            DrawCube({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 1.0f, 1.0f, 1.0f, color[i]);  
-            //DrawPoint3D({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, color[i]); 
+            //DrawSphere({pos_x[i], pos_y[i], pos_z[i]}, 1.0f, color[i]);
+            DrawCube({pos_x[i], pos_y[i], pos_z[i]}, 1.0f, 1.0f, 1.0f, color[i]);  
+            //DrawPoint3D({pos_x[i], pos_y[i], pos_z[i]}, color[i]); 
         }
     }
