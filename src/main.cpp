@@ -5,6 +5,7 @@
 
 #include "body.h"
 #include "sim.h"
+#include "args.h"
 #define WIDTH 1920 //1920x1080 
 #define HEIGHT 1080
 #define OFFA -100
@@ -13,97 +14,15 @@
 #define V_MAX 40
 
 constexpr float DT = 1.0f / 240.0f;
+unsigned int skipFrame = 3;
 
 int main(int argc, char* argv[]){
-    unsigned int size = 3;
-    unsigned int seed = 4;
-    unsigned int skipFrame = 3;
-    float g1tilt = 0;
-    float g2tilt = 0;
-    bool is3D = false;
-    bool sizetmp = false;
-    bool showFPS = false;
-    bool useBlend = false;
-    std::string modeCstl = "default";
 
-    // comands
-    for (int i = 1; i < argc; ++i) {
-        std::string arg = argv[i];
-        if (arg == "-3D") {
-            is3D = true;
-        } else if (arg == "-GlxCl") {
-            modeCstl = "GlxCl";
-        }else if (arg == "-fps") {
-            showFPS = true;
-        }else if (arg == "-blend") {
-            useBlend = true;
-        }else if (arg == "--seed") {
-            if (i + 1 >= argc) {
-                std::cerr << "Missing value for --seed\n";
-                return 1;
-            }
-            try {
-                seed = std::stoi(argv[++i]);
-            } catch (...) {
-                std::cerr << "Invalid seed\n";
-                return 1;
-            }
-        }else if (arg == "--g1tilt") {
-            if (i + 1 >= argc) {
-                std::cerr << "Missing value for --g1tilt\n";
-                return 1;
-            }
-            try {
-                g1tilt = std::stoi(argv[++i]);
-            } catch (...) {
-                std::cerr << "Invalid inclination\n";
-                return 1;
-            }
-        }else if (arg == "--g2tilt") {
-            if (i + 1 >= argc) {
-                std::cerr << "Missing value for --g2tilt\n";
-                return 1;
-            }
-            try {
-                g2tilt = std::stoi(argv[++i]);
-            } catch (...) {
-                std::cerr << "Invalid inclination\n";
-                return 1;
-            }
-        }else if (arg == "-h" || arg == "--help") {
-            std::cout << "Usage: nbody [NUMBER_OF_BODIES] [OPTIONS]\n\n";
-            std::cout << "Arguments:\n";
-            std::cout << "  NUMBER_OF_BODIES     Number of celestial bodies (optional, default: 3)\n\n";
-            std::cout << "Options:\n";
-            std::cout << "  -3D                  Enable 3D visualization\n";
-            std::cout << "  -GlxCl               Enable galaxy collision mode\n";
-            std::cout << "  -fps                 Show FPS on screen\n";
-            std::cout << "  -blend               Enable additive blending mode\n";
-            std::cout << "  --g1tilt <DEG>       Tilt angle for the first galaxy (in degrees)\n";
-            std::cout << "  --g2tilt <DEG>       Tilt angle for the second galaxy (in degrees)\n";
-            std::cout << "  --seed <N>           Set the seed for random generation\n";
-            std::cout << "  -h, --help           Show this help message\n";
-            return 0;
-        } else if (!arg.empty() && arg[0] == '-') {
-            std::cerr << "Unknown flag: " << arg << '\n';
-            return 1;
-        } else if (!sizetmp) {
-            try {
-                size = std::stoi(arg);
-                if (size < 1) { 
-                    std::cerr << "Number of bodies must be at least 1\n"; 
-                    return 1; 
-                }
-                sizetmp = true;
-            } catch (...) {
-                std::cerr << "Invalid number\n";
-                return 1;
-            }
-        } else {
-            std::cerr << "Unexpected argument: " << arg << '\n';
-            return 1;
-        }
-    }
+    Config cfg;
+    int ret = ParseArgs(argc, argv, cfg);
+    if (ret != -1) return ret;
+
+    auto &[size, seed, g1tilt, g2tilt, is3D, showFPS, useBlend, modeCstl] = cfg;
 
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
@@ -125,17 +44,19 @@ int main(int argc, char* argv[]){
     {   
         // controls
         if (IsKeyPressed(KEY_SPACE)) {
-            is3D = !is3D;
-            if (is3D) DisableCursor();
+            cfg.is3D = !cfg.is3D;
+            if (cfg.is3D) DisableCursor();
             else EnableCursor();
         }
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
 
         //UpdateState(costellation, GetFrameTime() * 0.25);
-        UpdateState(costellation, DT);
+        double t0 = GetTime();
+            UpdateState(costellation, DT);
+        double t1 = GetTime();
         UpdateGalaxyColor(costellation);
         //UpdateTrail(costellation);
-        if(is3D){
+        if(cfg.is3D){
             if(skipFrame > 0) skipFrame--;
             else UpdateCamera(&camera, CAMERA_FREE);
         }
@@ -145,7 +66,7 @@ int main(int argc, char* argv[]){
             
             if(showFPS) DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
 
-            if (!is3D) {
+            if (!cfg.is3D) {
                 if (useBlend) BeginBlendMode(BLEND_ADDITIVE);
                     costellation.draw2D();
                 if (useBlend) EndBlendMode();
@@ -158,6 +79,9 @@ int main(int argc, char* argv[]){
                 EndMode3D();
             }
         EndDrawing();
+        double t2 = GetTime();
+        if (showFPS) std::cout << "fisica: " << (t1 - t0) * 1000 << " ms   disegno+resto: "
+                            << (t2 - t1) * 1000 << " ms\n";
     }
     CloseWindow();
     return 0;    

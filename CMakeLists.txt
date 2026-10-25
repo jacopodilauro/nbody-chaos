@@ -11,9 +11,10 @@ endif()
 
 find_package(raylib REQUIRED)
 
-add_executable(nbody src/main.cpp)
+add_executable(nbody src/main.cpp src/sim.cpp src/body.cpp)
 
-# SIMD sempre attivo, OpenMP (multi-core) opzionale: -DOMP=ON per attivarlo
+target_include_directories(nbody PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+
 option(OMP "Abilita il multithreading con OpenMP" OFF)
 message(STATUS "OpenMP multi-core: ${OMP}")
 
@@ -51,13 +52,13 @@ add_custom_target(run
 )
 
 add_custom_target(galaxy1
-    COMMAND $<TARGET_FILE:nbody> -GlxCl -blend --g2tilt 25 3000
+    COMMAND $<TARGET_FILE:nbody> -glxy -blend --tilt2 25 3000
     DEPENDS nbody
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(galaxy2
-    COMMAND $<TARGET_FILE:nbody> -GlxCl -blend --g2tilt 90 --g1tilt -12 1000 -3D
+    COMMAND $<TARGET_FILE:nbody> -glxy -blend --tilt2 90 --tilt1 -12 1000 -3D
     DEPENDS nbody
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

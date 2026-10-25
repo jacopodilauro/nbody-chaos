@@ -10,7 +10,7 @@ Gravitational N-body simulation in C++ with [raylib](#credits), from the three-b
 
 ```shell
 # cmake
-cmake -B build -DPARALLEL=BOTH
+cmake -B build -DOMP=ON
 cmake --build build
 ```
 
@@ -54,11 +54,11 @@ make -C build galaxy2
 |:-|:-:|
 | `<N>` | set number of bodies (default 3) |
 | `-3D` | start in 3D view |
-| `-GlxCl` | Enable galaxy collision mode |
+| `-glxy` | Enable galaxy collision mode |
 | `-fps` | Show FPS |
 | `-blend` | Enable blending mode |
-|`--g1tilt <DEG>`| Tilt angle for the first galaxy (in degrees) |
-|`--g2tilt <DEG>`| Tilt angle for the second galaxy (in degrees) |
+|`--tilt1 <DEG>`| Tilt angle for the first galaxy (in degrees) |
+|`--tilt2 <DEG>`| Tilt angle for the second galaxy (in degrees) |
 | `--seed <N>` | random seed (default 4) |
 | `-h, --help` | show help option |
 
@@ -69,9 +69,9 @@ Press `Space` to switch between 2D and 3D.
 | Code | Example |
 |:-|:-:|
 |```./nbody 3000```|<img src="media/nbody3000.png" width=400px>|
-|```./nbody -GlxCl -blend --seed 34 -fps 2000```|<img src="media/img2D.png" width=400px>|
+|```./nbody -glxy -blend --seed 34 -fps 2000```|<img src="media/img2D.png" width=400px>|
 |```make -C build run ARGS="-blend 10"```|<img src="media/img10.png" width=400px>|
-|```./nbody 1000 -GlxCl -blend -3D --g2tilt 90```|<img src="media/img3d-n.jpeg" width=400px>|
+|```./nbody 1000 -glxy -blend -3D --tilt2 90```|<img src="media/img3d-n.jpeg" width=400px>|
 |```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
 |```...```||
 
