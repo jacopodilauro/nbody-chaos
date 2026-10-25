@@ -1,29 +1,16 @@
-#ifndef BODIES_H
-#define BODIES_H
-
 #include <raylib.h>
 #include <vector>
 
-struct Bodies{
-    
-    size_t count = 0;
+#include "body.h"
 
-    std::vector<double> mass;
-    std::vector<double> pos_x, pos_y, pos_z;
-    std::vector<double> vel_x, vel_y, vel_z;
-    std::vector<double> acc_x, acc_y, acc_z;
-
-    std::vector<Color> color;
-    std::vector<std::vector<Vector3>> trail;
-
-    Bodies(size_t n) : count(n), mass(n, 1.0),
+Bodies::Bodies(size_t n) : count(n), mass(n, 1.0),
         pos_x(n, 0.0), pos_y(n, 0.0), pos_z(n, 0.0),
         vel_x(n, 0.0), vel_y(n, 0.0), vel_z(n, 0.0),
         acc_x(n, 0.0), acc_y(n, 0.0), acc_z(n, 0.0),
         color(n, WHITE),
         trail(n) {}
 
-    void setBody(size_t i, double m, Vector3 p, Vector3 v, Vector3 a, Color c) {
+void Bodies::setBody(size_t i, double m, Vector3 p, Vector3 v, Vector3 a, Color c) {
         mass[i] = m;
         pos_x[i] = p.x; pos_y[i] = p.y; pos_z[i] = p.z;
         vel_x[i] = v.x; vel_y[i] = v.y; vel_z[i] = v.z;
@@ -32,20 +19,20 @@ struct Bodies{
     }
 
     
-    inline void drawTrail2D(const std::vector<Vector3>& t, size_t i) const {
+void Bodies::drawTrail2D(const std::vector<Vector3>& t, size_t i) const {
         for (size_t j = 1; j < t.size(); j++) {
             DrawLine(static_cast<int>(t[j - 1].x), static_cast<int>(t[j - 1].y), 
                 static_cast<int>(t[j].x), static_cast<int>(t[j].y), color[i]);
         }
     }
      
-    inline void drawTrail3D(const std::vector<Vector3>& t, size_t i) const {
+void Bodies::drawTrail3D(const std::vector<Vector3>& t, size_t i) const {
         for (size_t j = 1; j < t.size(); j++) {
             DrawLine3D(t[j - 1], t[j], color[i]);
         }
     }
     
-    void draw2D() const {
+void Bodies::draw2D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail2D(trail[i], i);
             //DrawCircle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 1.0f, color[i]);
@@ -54,7 +41,7 @@ struct Bodies{
         }
     }
 
-    void draw3D() const {
+void Bodies::draw3D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail3D(trail[i], i);
             //DrawSphere({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, 1.0f, color[i]);
@@ -62,6 +49,3 @@ struct Bodies{
             //DrawPoint3D({static_cast<float>(pos_x[i]), static_cast<float>(pos_y[i]), static_cast<float>(pos_z[i])}, color[i]); 
         }
     }
-};
-
-#endif

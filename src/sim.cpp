@@ -1,13 +1,3 @@
-#ifndef SIM_H
-#define SIM_H
-
-#if defined(USE_OMP)
-  #define OMP_PARALLEL_FOR      _Pragma("omp parallel for schedule(static)")
-  #define OMP_PARALLEL_FOR_SIMD _Pragma("omp parallel for simd schedule(static)")
-#else
-  #define OMP_PARALLEL_FOR
-  #define OMP_PARALLEL_FOR_SIMD _Pragma("omp simd")
-#endif
 
 #include <raylib.h>
 #include <raymath.h>
@@ -16,11 +6,10 @@
 #include <vector>
 #include <cmath>
 
-#include "body.h"
- 
-constexpr double G = 500; // 6.67e-11
+#include "sim.h"
+
+constexpr double G = 500; 
 constexpr double EPS2 = 20.0 * 20.0;
-//constexpr int eps = 20;// 1e-9
 
 void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.count;
@@ -184,7 +173,8 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
         Vector3 offPos = { r * std::cos(angle), r * std::sin(angle), noise(gen) };
 
         float dist = std::sqrt(offPos.x * offPos.x + offPos.y * offPos.y);
-        float v = std::sqrt((G * bhMass) / dist);
+        double r2 = (double)dist * dist;
+        float v = (float)std::sqrt(G * bhMass * r2 / std::pow(r2 + EPS2, 1.5));
         Vector3 offVel = { -v * (offPos.y / dist), v * (offPos.x / dist), 0.0f };
 
         offPos = Vector3RotateByAxisAngle(offPos, axis, isFirst ? tilt1 : tilt2);
@@ -196,5 +186,3 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
         b.setBody(i, 0.01, p, vv, {0}, WHITE);
     }
 }
-
-#endif
