@@ -13,7 +13,7 @@ find_package(raylib REQUIRED)
 
 add_executable(nbody src/main.cpp src/sim.cpp src/body.cpp)
 
-target_include_directories(nbody PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_include_directories(nbody PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 option(OMP "Abilita il multithreading con OpenMP" OFF)
 message(STATUS "OpenMP multi-core: ${OMP}")
@@ -45,6 +45,7 @@ endif()
 set_target_properties(nbody PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 
+# TEST 
 add_custom_target(run
     COMMAND $<TARGET_FILE:nbody> $$ARGS
     DEPENDS nbody

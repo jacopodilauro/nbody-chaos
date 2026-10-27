@@ -12,6 +12,7 @@ struct Config {
     bool is3D = false;
     bool showFPS = false;
     bool useBlend = false;
+    bool useTrail = false;
     std::string modeCstl = "default";
 };
 
@@ -20,7 +21,7 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "-3D") {
+        if (arg == "-3D" | arg == "-3d") {
             cfg.is3D = true;
         } else if (arg == "-glxy") {
             cfg.modeCstl = "glxy";
@@ -28,6 +29,8 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             cfg.showFPS = true;
         } else if (arg == "-blend" | arg == "-b") {
             cfg.useBlend = true;
+        } else if (arg == "-trail" | arg == "-t") {
+            cfg.useTrail = true;
         } else if (arg == "--seed") {
             if (i + 1 >= argc) {
                 std::cerr << "Missing value for --seed\n";
@@ -62,18 +65,20 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
                 return 1;
             }
         } else if (arg == "-h" || arg == "--help") {
-            std::cout << "Usage: nbody [NUMBER_OF_BODIES] [OPTIONS]\n\n";
+            std::cout << "Usage: nbody [NUMBER_OF_BODIES] [OPTIONS]\n";
+            std::cout << " > 'the order is not important.'\n\n";
             std::cout << "Arguments:\n";
-            std::cout << "  NUMBER_OF_BODIES     Number of celestial bodies (optional, default: 3)\n\n";
+            std::cout << "  NUMBER_OF_BODIES     Number of celestial bodies (default: 3)\n\n";
             std::cout << "Options:\n";
             std::cout << "  -3D                  Enable 3D visualization\n";
             std::cout << "  -glxy                Enable galaxy collision mode\n";
             std::cout << "  -fps                 Show FPS on screen\n";
-            std::cout << "  -blend | -b          Enable blending mode\n";
+            std::cout << "  -blend, -b           Enable blending mode\n";
+            std::cout << "  -trail, -t           Draw Trail\n";
             std::cout << "  --tilt1 <DEG>        Tilt angle for the first galaxy (in degrees)\n";
             std::cout << "  --tilt2 <DEG>        Tilt angle for the second galaxy (in degrees)\n";
-            std::cout << "  --seed <N>           Set the seed for random generation\n";
-            std::cout << "  -h, --help           Show this help message\n";
+            std::cout << "  --seed <N>           Set the seed for random generation (default: 4)\n";
+            std::cout << "  -h, --help           Show help message\n";
             return 0;
         } else if (!arg.empty() && arg[0] == '-') {
             std::cerr << "Unknown flag: " << arg << '\n';

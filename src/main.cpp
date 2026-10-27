@@ -22,9 +22,9 @@ int main(int argc, char* argv[]){
     int ret = ParseArgs(argc, argv, cfg);
     if (ret != -1) return ret;
 
-    auto &[size, seed, tilt1, tilt2, is3D, showFPS, useBlend, modeCstl] = cfg;
+    auto &[size, seed, tilt1, tilt2, is3D, showFPS, useBlend,useTrail, modeCstl] = cfg;
 
-    SetTraceLogLevel(LOG_FATAL);
+    //SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     Bodies costellation(size);
 
@@ -36,24 +36,29 @@ int main(int argc, char* argv[]){
                         { 0.0f, 1.0f, 0.0f }, 60.0f, CAMERA_PERSPECTIVE };
     
     if (is3D) {
+        //HideCursor();
         DisableCursor();
     }
 
     SetTargetFPS(60);
     while (!WindowShouldClose())   
     {   
-        // controls
+        // live controls
         if (IsKeyPressed(KEY_SPACE)) {
             cfg.is3D = !cfg.is3D;
             if (cfg.is3D) DisableCursor();
             else EnableCursor();
         }
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
+        //---
 
-        UpdateState(costellation, GetFrameTime() * 0.25);
-        //UpdateState(costellation, DT);
+        //Update
+        //UpdateState(costellation, GetFrameTime() * 0.25);
+        UpdateState(costellation, DT);
         UpdateGalaxyColor(costellation);
-        //UpdateTrail(costellation);
+        if(useTrail) UpdateTrail(costellation);
+        //---
+
         if(cfg.is3D){
             if(skipFrame > 0) skipFrame--;
             else UpdateCamera(&camera, CAMERA_FREE);
@@ -65,12 +70,14 @@ int main(int argc, char* argv[]){
             if(showFPS) DrawText(std::to_string(GetFPS()).c_str(), 20, 20, 20, WHITE);
 
             if (!cfg.is3D) {
+                if(useTrail) costellation.drawTrail2D();
                 if (useBlend) BeginBlendMode(BLEND_ADDITIVE);
                     costellation.draw2D();
                 if (useBlend) EndBlendMode();
             } else {
                 BeginMode3D(camera);
                     DrawCustomGrid(Vector3{ WIDTH / 2.0f, (HEIGHT / 2.0f) - 150.0f, 0.0f }, 50, 15.0f);
+                    if(useTrail) costellation.drawTrail3D();
                     if (useBlend) BeginBlendMode(BLEND_ADDITIVE);
                         costellation.draw3D();
                     if (useBlend) EndBlendMode();

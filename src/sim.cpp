@@ -116,7 +116,7 @@ void UpdateTrail(Bodies &cstl){
     OMP_PARALLEL_FOR   
     for(size_t i = 0; i < l; i++){
         cstl.trail[i].push_back({cstl.pos_x[i], cstl.pos_y[i], cstl.pos_z[i]});
-        if(cstl.trail[i].size() > 25){
+        if(cstl.trail[i].size() > 10){
             cstl.trail[i].erase(cstl.trail[i].begin());
         }   
     }
@@ -138,7 +138,6 @@ void DrawCustomGrid(Vector3 center, int slices, float spacing) {
     }
 }
 
-// Galaxy collision
 void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g1tilt, float g2tilt) {
     size_t size = b.count;
     if (size < 2) return;

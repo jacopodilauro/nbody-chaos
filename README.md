@@ -27,6 +27,7 @@ If you don't like cmake (linux only), use this + flags:
 
 ```shell
 g++ main.cpp -O3 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+
 # for max performance 
 g++ main.cpp -O3 -o nbody -march=native -ffast-math -fopenmp -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
