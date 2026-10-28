@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/dd21132d-aea7-4bcd-acb3-04e68fe07868
 > [!WARNING]
 > This simulation software is not and -will never be- as high-performing as it should be.
 >
-> Today Oct 2026 using Intel Core i5 (4 core / 8 thread):
+> Today Oct 2026 using **only CPU** Intel Core i5 (4 core / 8 thread):
 > - 10,000 entities at 45 fps (`--opt 0`)
 > - 200,000 entities at 28 fps (`-glxy --opt 1`)
 >

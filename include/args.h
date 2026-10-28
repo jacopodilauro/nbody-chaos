@@ -69,14 +69,15 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             if (i + 1 >= argc) {
                 std::cerr << "Missing value for --opt\n";
                 return 1;
-            }else if (std::stof(argv[i+1]) > 1) {
-                std::cerr << "Error value for --opt\n";
-                return 1;
             }
             try {
                 cfg.opt_mode = std::stof(argv[++i]);
             } catch (...) {
                 std::cerr << "Invalid Optimation mode\n";
+                return 1;
+            }
+            if (std::stof(argv[i]) > 1) {
+                std::cerr << "Error value for --opt\n";
                 return 1;
             }
         } else if (arg == "-h" || arg == "--help") {
