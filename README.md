@@ -121,6 +121,12 @@ Forces are computed with the exact ***Direct Particle-Particle*** method with $\
 Built with [raylib](https://www.raylib.com/) by [@raysan5](https://github.com/raysan5) and contributors,
 licensed under the [zlib/libpng license](https://github.com/raysan5/raylib/blob/master/LICENSE).
 
+## Roadmap
+
+- [x] Restricted N-body mode for galaxy collisions
+- [ ] GPU rendering
+- [ ] Barnes-Hut octree, $\mathcal{O}(N \log N)$
+
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.

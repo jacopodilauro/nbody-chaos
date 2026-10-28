@@ -22,15 +22,15 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "-3D" | arg == "-3d") {
+        if (arg == "-3D" || arg == "-3d") {
             cfg.is3D = true;
         } else if (arg == "-glxy") {
             cfg.modeCstl = "glxy";
         } else if (arg == "-fps") {
             cfg.showFPS = true;
-        } else if (arg == "-blend" | arg == "-b") {
+        } else if (arg == "-blend" || arg == "-b") {
             cfg.useBlend = true;
-        } else if (arg == "-trail" | arg == "-t") {
+        } else if (arg == "-trail" || arg == "-t") {
             cfg.useTrail = true;
         } else if (arg == "--seed") {
             if (i + 1 >= argc) {
