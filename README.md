@@ -92,6 +92,9 @@ Each frame, `UpdateState` advances the system by a fixed time step (`dt = 1/240`
 With `-DOMP=ON` the outer loop runs on all cores via `#pragma omp parallel for`;
 otherwise it is single-threaded, SIMD only.
 
+With `-opt 1`, stars are massless test particles: they feel the black holes but don't pull on each other (restricted N-body, as in [Toomre & Toomre, 1972](https://articles.adsabs.harvard.edu/pdf/1972ApJ...178..623T) or [summary](https://www.cv.nrao.edu/~jhibbard/students/CPower/numerical/num_antennae/tt72.html)).
+Since sources are stored first, the inner loop is still contiguous and vectorized.
+
 ## Physics Behind
 
 Each body feels the gravitational pull of every other body, with a softening term $\varepsilon$ to avoid infinite forces when two bodies get too close.

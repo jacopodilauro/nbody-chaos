@@ -9,8 +9,8 @@
 
 #define WIDTH 1920
 #define HEIGHT 1080
-#define OFFA -100
-#define OFFB 100
+#define OFFA -400
+#define OFFB 400
 #define V_MIN -40
 #define V_MAX 40
 

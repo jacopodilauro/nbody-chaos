@@ -19,7 +19,7 @@ void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, fl
     std::uniform_real_distribution<float> distV(va, vb);
     std::uniform_int_distribution<int> distC(0, 255);
 
-    cstl.setBody(0, 500.0, {WIDTH / 2.0f, HEIGHT / 2.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0}, WHITE);
+    cstl.setBody(0, 50.0, {WIDTH / 2.0f, HEIGHT / 2.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0}, WHITE);
     for(size_t i = 1; i < size; i++){
         cstl.setBody(i, 50, {WIDTH / 2.0f + distP(gen), HEIGHT / 2.0f + distP(gen), distP(gen)},
                             {distV(gen), distV(gen), distV(gen)}, {0}, 
