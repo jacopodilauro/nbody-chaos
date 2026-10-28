@@ -3,9 +3,9 @@
 #include <vector>
 #include <string>
 
-#include "body.h"
-#include "sim.h"
-#include "args.h"
+#include "../include/body.h"
+#include "../include/sim.h"
+#include "../include/args.h"
 
 #define WIDTH 1920
 #define HEIGHT 1080

@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <vector>
 
-#include "body.h"
+#include "../include/body.h"
 
 Bodies::Bodies(size_t n) : count(n), mass(n, 1.0),
         pos_x(n, 0.0), pos_y(n, 0.0), pos_z(n, 0.0),
@@ -10,7 +10,7 @@ Bodies::Bodies(size_t n) : count(n), mass(n, 1.0),
         color(n, WHITE),
         trail(n) {}
 
-void Bodies::setBody(size_t i, double m, Vector3 p, Vector3 v, Vector3 a, Color c) {
+void Bodies::setBody(size_t i, float m, Vector3 p, Vector3 v, Vector3 a, Color c) {
     mass[i] = m;
     pos_x[i] = p.x; pos_y[i] = p.y; pos_z[i] = p.z;
     vel_x[i] = v.x; vel_y[i] = v.y; vel_z[i] = v.z;

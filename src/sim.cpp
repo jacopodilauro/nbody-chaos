@@ -6,10 +6,10 @@
 #include <vector>
 #include <cmath>
 
-#include "sim.h"
+#include "../include/sim.h"
 
-constexpr double G = 500; 
-constexpr double EPS2 = 20.0 * 20.0;
+constexpr float G = 500; 
+constexpr float EPS2 = 20.0 * 20.0;
 
 void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.count;
@@ -30,7 +30,7 @@ void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, fl
 void UpdateState(Bodies &cstl, float dt){
     const size_t size = cstl.count; 
 
-    const double* __restrict l_m = cstl.mass.data();
+    const float* __restrict l_m = cstl.mass.data();
     float* __restrict l_px = cstl.pos_x.data();
     float* __restrict l_py = cstl.pos_y.data();
     float* __restrict l_pz = cstl.pos_z.data();
@@ -44,21 +44,21 @@ void UpdateState(Bodies &cstl, float dt){
 
     OMP_PARALLEL_FOR
     for (size_t i = 0; i < size; i++) {
-        const double xi = l_px[i];
-        const double yi = l_py[i];
-        const double zi = l_pz[i];
-        double ax = 0, ay = 0, az = 0; 
+        const float xi = l_px[i];
+        const float yi = l_py[i];
+        const float zi = l_pz[i];
+        float ax = 0, ay = 0, az = 0; 
 
         #pragma omp simd reduction(+:ax, ay, az)
         for(size_t j = 0; j < size; j++){
 
-            double dx = l_px[j] - xi;
-            double dy = l_py[j] - yi;
-            double dz = l_pz[j] - zi; 
+            float dx = l_px[j] - xi;
+            float dy = l_py[j] - yi;
+            float dz = l_pz[j] - zi; 
 
-            double distSqr = dx*dx + dy*dy + dz*dz + EPS2;
-            double dist = std::sqrt(distSqr);
-            double factor_i = (G * (double)l_m[j]) / (distSqr * dist);
+            float distSqr = dx*dx + dy*dy + dz*dz + EPS2;
+            float dist = std::sqrt(distSqr);
+            float factor_i = (G * (float)l_m[j]) / (distSqr * dist);
             
             ax += factor_i * dx;
             ay += factor_i * dy;
@@ -88,8 +88,8 @@ void UpdateGalaxyColor(Bodies &cstl){
     OMP_PARALLEL_FOR   
     for(size_t i = 0; i < n; i++){
         if (cstl.mass[i] < 1.0) {
-            double l_vx = cstl.vel_x[i], l_vy = cstl.vel_y[i], l_vz = cstl.vel_z[i];
-            double speed = std::sqrt(l_vx*l_vx + l_vy*l_vy + l_vz*l_vz);
+            float l_vx = cstl.vel_x[i], l_vy = cstl.vel_y[i], l_vz = cstl.vel_z[i];
+            float speed = std::sqrt(l_vx*l_vx + l_vy*l_vy + l_vz*l_vz);
             float s = std::min(1.0f, static_cast<float>(speed / 1200.0));
             if(i < m){
                 cstl.color[i] = Color{
@@ -146,7 +146,7 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
     std::uniform_real_distribution<float> distR(25.0f, 220.0f);
     std::normal_distribution<float> noise(0.0f, 6.0f);
 
-    double bhMass = 80000.0;
+    float bhMass = 80000.0;
     float tilt2 = g2tilt * DEG2RAD;
     float tilt1 = g1tilt * DEG2RAD;
     Vector3 axis = { 1.0f, 0.0f, 0.0f };
@@ -172,7 +172,7 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
         Vector3 offPos = { r * std::cos(angle), r * std::sin(angle), noise(gen) };
 
         float dist = std::sqrt(offPos.x * offPos.x + offPos.y * offPos.y);
-        double r2 = (double)dist * dist;
+        float r2 = (float)dist * dist;
         float v = (float)std::sqrt(G * bhMass * r2 / std::pow(r2 + EPS2, 1.5));
         Vector3 offVel = { -v * (offPos.y / dist), v * (offPos.x / dist), 0.0f };
 
