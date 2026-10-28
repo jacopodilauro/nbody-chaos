@@ -15,42 +15,34 @@ Gravitational N-body simulation in C++ with [raylib](#credits), from the three-b
 
 ```shell
 # cmake
-cmake -B build -DOMP=ON
+cmake -B build -DOMP=ON     # multi-threaded (OpenMP + SIMD)
 cmake --build build
 ```
 
-`PARALLEL` selects how the simulation is accelerated:
+With `-DOMP=OFF` (the default) it runs on a single thread with SIMD vectorization.
+The `nbody` executable is placed in the project root.
 
-| Mode | OMP | SIMD | g++ flags |
-|:-|:-:|:-:|:-|
-| `NONE` | N | N | *(none)* |
-| `SIMD` | N | Y | `-fopenmp-simd` |
-| `OMP` | Y | N | `-fopenmp -DNO_SIMD` |
-| `BOTH` *(default)* | Y | Y | `-fopenmp` |
+---
 
-If you don't like cmake (linux only), use this + flags:
+If you don't like cmake (linux only):
 
 ```shell
-g++ main.cpp -O3 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+g++ src/*.cpp -Iinclude -O3 -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 # for max performance 
-g++ main.cpp -O3 -o nbody -march=native -ffast-math -fopenmp -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+g++ src/*.cpp -Iinclude -O3 -march=native -ffast-math -fopenmp -DUSE_OMP -o nbody -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 ```
 
-The number of threads can be limited at runtime with `OMP_NUM_THREADS=4 ./nbody [...]`.
+You can limit the number of threads with `OMP_NUM_THREADS=4 ./nbody [...]`.
 
 ## Usage
 
 ```shell
-# running cmake
-make -C build run ARGS="[OPTIONS]"
-# or classic c
-./nbody [OPTIONS] #for Win nbody.exe [OPTIONS]
+./nbody [OPTIONS]    # Windows: nbody.exe [OPTIONS]
 
-# demo 1
+# demo
 make -C build galaxy1
-# demo 2
 make -C build galaxy2
 
 ```
@@ -62,7 +54,8 @@ make -C build galaxy2
 | `-3D` | start in 3D view |
 | `-glxy` | Enable galaxy collision mode |
 | `-fps` | Show FPS |
-| `-blend` | Enable blending mode |
+| `-blend`, `-b` | Enable blending mode |
+| `-trail`, `-t` | Enable trails|
 |`--tilt1 <DEG>`| Tilt angle for the first galaxy (in degrees) |
 |`--tilt2 <DEG>`| Tilt angle for the second galaxy (in degrees) |
 | `--seed <N>` | random seed (default 4) |
@@ -76,7 +69,7 @@ Press `Space` to switch between 2D and 3D.
 |:-|:-:|
 |```./nbody 3000```|<img src="media/nbody3000.png" width=400px>|
 |```./nbody -glxy -blend --seed 34 -fps 2000```|<img src="media/img2D.png" width=400px>|
-|```make -C build run ARGS="-blend 10"```|<img src="media/img10.png" width=400px>|
+|```./nbody -blend 10```|<img src="media/img10.png" width=400px>|
 |```./nbody 1000 -glxy -blend -3D --tilt2 90```|<img src="media/img3d-n.jpeg" width=400px>|
 |```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
 |```...```||

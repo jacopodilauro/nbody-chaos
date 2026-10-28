@@ -46,11 +46,11 @@ set_target_properties(nbody PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_
 
 
 # TEST 
-add_custom_target(run
-    COMMAND $<TARGET_FILE:nbody> $$ARGS
-    DEPENDS nbody
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+# add_custom_target(run
+#     COMMAND $<TARGET_FILE:nbody> $$ARGS
+#     DEPENDS nbody
+#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+# )
 
 add_custom_target(galaxy1
     COMMAND $<TARGET_FILE:nbody> -glxy -blend --tilt2 25 3000
