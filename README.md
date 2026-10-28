@@ -2,13 +2,16 @@
 
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
+
 https://github.com/user-attachments/assets/dd21132d-aea7-4bcd-acb3-04e68fe07868
-<!--<p align="center">
-  <img src="media/galaxy2D_3MB.gif" alt="gif galaxy" width="400"/>
-</p>-->
 
 > [!WARNING]
-> This simulation software is not and *will never be* as high-performing as it should be.<br>
+> This simulation software is not and -will never be- as high-performing as it should be.
+>
+> Today Oct 2026 using Intel Core i5 (4 core / 8 thread):
+> - 10,000 entities at 45 fps (`--opt 0`)
+> - 200,000 entities at 28 fps (`-glxy --opt 1`)
+>
 > Keep expectations low.
 
 ## Build
@@ -39,7 +42,7 @@ You can limit the number of threads with `OMP_NUM_THREADS=4 ./nbody [...]`.
 ## Usage
 
 ```shell
-./nbody [OPTIONS]    # Windows: nbody.exe [OPTIONS]
+./nbody [N] [OPTIONS]    # Windows: nbody.exe [N] [OPTIONS]
 
 # demo
 make -C build galaxy1
@@ -56,45 +59,59 @@ make -C build galaxy2
 | `-fps` | Show FPS |
 | `-blend`, `-b` | Enable blending mode |
 | `-trail`, `-t` | Enable trails|
+| `--opt <M>`, `-O <M>` | Set mode [0-1] |
 |`--tilt1 <DEG>`| Tilt angle for the first galaxy (in degrees) |
 |`--tilt2 <DEG>`| Tilt angle for the second galaxy (in degrees) |
 | `--seed <N>` | random seed (default 4) |
 | `-h, --help` | show help option |
 
 Press `Space` to switch between 2D and 3D.
+The opt mode only changes how far the inner loop goes, which bodies act as gravity sources:
+- --opt 0 (all bodies $\mathcal{O}(N^2)$)
+- --opt 1 (only the first biggest `M` bodies $\mathcal{O}(N \cdot M)$) only in *-glxy*.
 
 ## Examples
 
 | Code | Example |
 |:-|:-:|
 |```./nbody 3000```|<img src="media/nbody3000.png" width=400px>|
-|```./nbody -glxy -blend --seed 34 -fps 2000```|<img src="media/img2D.png" width=400px>|
+|```./nbody 100000 -fps -b -glxy -fps```|<img src="media/m.png" width=400px height=250>|
 |```./nbody -blend 10```|<img src="media/img10.png" width=400px>|
 |```./nbody 1000 -glxy -blend -3D --tilt2 90```|<img src="media/img3d-n.jpeg" width=400px>|
 |```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
-|```...```||
+|```./nbody 100000 -fps -b -glxy --opt 1```| <img src="media/eyes.png" width="400"> |
+|```see media/..```||
 
-## How it works
+## How It Works
 
-Each body feels the gravitational pull of every other body, with a softening term $\varepsilon$ to avoid infinite forces when two bodies get too close
+Entities are stored as structure of array (`pos_x`, `vel_x`, `mass`, ...), so the inner force loop reads contiguous memory and vectorizes with
+`#pragma omp simd reduction(+:ax, ay, az)`.
+
+Each frame, `UpdateState` advances the system by a fixed time step (`dt = 1/240`), and uses semi-implicit Euler (see [Physics behind](#physics-behind)).
+
+With `-DOMP=ON` the outer loop runs on all cores via `#pragma omp parallel for`;
+otherwise it is single-threaded, SIMD only.
+
+## Physics Behind
+
+Each body feels the gravitational pull of every other body, with a softening term $\varepsilon$ to avoid infinite forces when two bodies get too close.
 
 Decreasing $\varepsilon$ makes gravitational force much stronger in close distance, this leads to more extreme encounters and chaotic trajectories.
 
 $$
-\mathbf{a}_i = \sum_{j \neq i} \frac{G \, m_j \, (\mathbf{r}_j - \mathbf{r}_i)}{\left(|\mathbf{r}_j - \mathbf{r}_i|^2 + \varepsilon^2\right)^{3/2}}
+\mathbf{a}_i = \sum_{j \neq i} \frac{G \, m_j \, (\mathbf{p}_j - \mathbf{p}_i)}{\left(|\mathbf{p}_j - \mathbf{p}_i|^2 + \varepsilon^2\right)^{3/2}}
 $$
+
 
 $G$ and $\varepsilon$ are in simulation units, not real-world values.
 
 
 Velocities and positions are then updated with semi-implicit Euler integration:
 
-$$
-\mathbf{v}(t+ \Delta t)_i = \mathbf{v}_i + \mathbf{a}_i \, \Delta t \qquad | \qquad \mathbf{p}(t+ \Delta t)_i = \mathbf{p}_i + \mathbf{v}_i \, \Delta t
-$$
+$$\mathbf{v}_{n+1} = \mathbf{v}_n + \mathbf{a}(\mathbf{p}_n)\,\Delta t \qquad \mathbf{p}_{n+1} = \mathbf{p}_n + \mathbf{v}_{n+1}\,\Delta t$$
 
 
-The simulation supports two solver algorithm: the exact ***Direct Particle-Particle*** method with $\mathcal{O}(N^2)$ complexity, and the ***Barnes-Hut octree*** approximation (planned...), which groups distant bodies by their center of mass to reduce complexity to $\mathcal{O}(N \log N)$.
+Forces are computed with the exact ***Direct Particle-Particle*** method with $\mathcal{O}(N^2)$ complexity. A **Barnes-Hut octree** ($\mathcal{O}(N \log N)$) is planned.
 
 ## Credits
 

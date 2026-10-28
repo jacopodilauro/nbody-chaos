@@ -13,6 +13,7 @@ constexpr float EPS2 = 20.0 * 20.0;
 
 void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, float pb, float va, float vb){
     size_t size = cstl.count;
+    cstl.opt_importantcount = size;
     std::mt19937 gen(seed);
     std::uniform_real_distribution<float> distP(pa, pb);
     std::uniform_real_distribution<float> distV(va, vb);
@@ -28,7 +29,8 @@ void InitNBodies(Bodies &cstl, float WIDTH, float HEIGHT, int seed, float pa, fl
 }
 
 void UpdateState(Bodies &cstl, float dt){
-    const size_t size = cstl.count; 
+    const size_t opt_size = cstl.opt_importantcount; 
+    const size_t size = cstl.count;
 
     const float* __restrict l_m = cstl.mass.data();
     float* __restrict l_px = cstl.pos_x.data();
@@ -50,7 +52,7 @@ void UpdateState(Bodies &cstl, float dt){
         float ax = 0, ay = 0, az = 0; 
 
         #pragma omp simd reduction(+:ax, ay, az)
-        for(size_t j = 0; j < size; j++){
+        for(size_t j = 0; j < opt_size; j++){
 
             float dx = l_px[j] - xi;
             float dy = l_py[j] - yi;
@@ -68,7 +70,7 @@ void UpdateState(Bodies &cstl, float dt){
         l_ay[i] = ay;
         l_az[i] = az;
     }
-    
+
     OMP_PARALLEL_FOR_SIMD
     for (size_t i = 0; i < size; i++) {
         l_vx[i] += l_ax[i] * dt;
@@ -138,9 +140,11 @@ void DrawCustomGrid(Vector3 center, int slices, float spacing) {
     }
 }
 
-void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g1tilt, float g2tilt) {
-    size_t size = b.count;
+void InitGalaxyCollision(Bodies &cstl, float WIDTH, float HEIGHT, int seed, unsigned int opt_mode, float g1tilt, float g2tilt) {
+    size_t size = cstl.count;
     if (size < 2) return;
+    cstl.opt_importantcount = opt_mode == 0? size : 2;
+
     size_t half = size / 2;
     std::mt19937 gen(seed);
     std::uniform_real_distribution<float> distR(25.0f, 220.0f);
@@ -153,14 +157,13 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
 
     Vector3 pos1 = {WIDTH / 2.0f - 300.0f, HEIGHT / 2.0f + 100.0f, 0.0f};
     Vector3 vel1 = {45.0f, -10.0f, 0.0f};
-    b.setBody(0, bhMass, pos1, vel1, {0}, WHITE);
+    cstl.setBody(0, bhMass, pos1, vel1, {0}, WHITE);
 
     Vector3 pos2 = {WIDTH / 2.0f + 300.0f, HEIGHT / 2.0f - 100.0f, 0.0f};
     Vector3 vel2 = {-45.0f, 10.0f, 0.0f};
-    b.setBody(half, bhMass, pos2, vel2, {0}, WHITE);
+    cstl.setBody(1, bhMass, pos2, vel2, {0}, WHITE);   
 
-    for (size_t i = 1; i < size; i++) {
-        if (i == half) continue;
+    for (size_t i = 2; i < size; i++) {               
 
         bool isFirst = (i < half);
         Vector3 centerPos = isFirst ? pos1 : pos2;
@@ -182,6 +185,6 @@ void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, float g
         Vector3 p  = Vector3Add(centerPos, offPos);
         Vector3 vv = Vector3Add(centerVel, offVel);
 
-        b.setBody(i, 0.01, p, vv, {0}, WHITE);
+        cstl.setBody(i, 0.01, p, vv, {0}, WHITE);
     }
 }

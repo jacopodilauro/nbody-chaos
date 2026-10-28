@@ -7,6 +7,8 @@
 struct Bodies{
     
     size_t count = 0;
+    size_t opt_importantcount = 0;
+    unsigned int n_glxy = 0;
 
     std::vector<float> mass;
     std::vector<float> pos_x, pos_y, pos_z;

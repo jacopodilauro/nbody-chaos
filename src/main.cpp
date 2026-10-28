@@ -23,13 +23,13 @@ int main(int argc, char* argv[]){
     int ret = ParseArgs(argc, argv, cfg);
     if (ret != -1) return ret;
 
-    auto &[size, seed, tilt1, tilt2, is3D, showFPS, useBlend,useTrail, modeCstl] = cfg;
+    auto &[size, seed, opt_mode, tilt1, tilt2, is3D, showFPS, useBlend,useTrail, modeCstl] = cfg;
 
     SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     Bodies costellation(size);
 
-    if(modeCstl == "glxy") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed, tilt1, tilt2);
+    if(modeCstl == "glxy") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed, opt_mode, tilt1, tilt2);
     else InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
     
     Camera3D camera = { { WIDTH/2.0f - 500, HEIGHT/2.0f + 500.0f, 500.0f },

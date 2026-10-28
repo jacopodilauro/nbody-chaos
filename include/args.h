@@ -7,6 +7,7 @@
 struct Config {
     unsigned int size = 3;
     unsigned int seed = 4;
+    unsigned int opt_mode = 1;
     float tilt1 = 0;
     float tilt2 = 0;
     bool is3D = false;
@@ -64,6 +65,20 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
                 std::cerr << "Invalid inclination\n";
                 return 1;
             }
+        } else if (arg == "--opt" || arg == "-O") {
+            if (i + 1 >= argc) {
+                std::cerr << "Missing value for --opt\n";
+                return 1;
+            }else if (std::stof(argv[i+1]) > 1) {
+                std::cerr << "Error value for --opt\n";
+                return 1;
+            }
+            try {
+                cfg.opt_mode = std::stof(argv[++i]);
+            } catch (...) {
+                std::cerr << "Invalid Optimation mode\n";
+                return 1;
+            }
         } else if (arg == "-h" || arg == "--help") {
             std::cout << "Usage: nbody [NUMBER_OF_BODIES] [OPTIONS]\n";
             std::cout << " > 'the order is not important.'\n\n";
@@ -75,6 +90,7 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             std::cout << "  -fps                 Show FPS on screen\n";
             std::cout << "  -blend, -b           Enable blending mode\n";
             std::cout << "  -trail, -t           Draw Trail\n";
+            std::cout << "  -opt <M>, -O <M>     Set mode [0-1]\n";
             std::cout << "  --tilt1 <DEG>        Tilt angle for the first galaxy (in degrees)\n";
             std::cout << "  --tilt2 <DEG>        Tilt angle for the second galaxy (in degrees)\n";
             std::cout << "  --seed <N>           Set the seed for random generation (default: 4)\n";
