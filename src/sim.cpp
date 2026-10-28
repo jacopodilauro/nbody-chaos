@@ -90,7 +90,7 @@ void UpdateGalaxyColor(Bodies &cstl){
         if (cstl.mass[i] < 1.0) {
             double l_vx = cstl.vel_x[i], l_vy = cstl.vel_y[i], l_vz = cstl.vel_z[i];
             double speed = std::sqrt(l_vx*l_vx + l_vy*l_vy + l_vz*l_vz);
-            float s = std::min(1.0f, static_cast<float>(speed / 1300.0));
+            float s = std::min(1.0f, static_cast<float>(speed / 1200.0));
             if(i < m){
                 cstl.color[i] = Color{
                     static_cast<unsigned char>(45 + 210 * s * s),

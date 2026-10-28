@@ -6,6 +6,7 @@
 #include "body.h"
 #include "sim.h"
 #include "args.h"
+
 #define WIDTH 1920
 #define HEIGHT 1080
 #define OFFA -100
@@ -24,7 +25,7 @@ int main(int argc, char* argv[]){
 
     auto &[size, seed, tilt1, tilt2, is3D, showFPS, useBlend,useTrail, modeCstl] = cfg;
 
-    //SetTraceLogLevel(LOG_FATAL);
+    SetTraceLogLevel(LOG_FATAL);
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     Bodies costellation(size);
 
