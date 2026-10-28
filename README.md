@@ -9,7 +9,7 @@ https://github.com/user-attachments/assets/dd21132d-aea7-4bcd-acb3-04e68fe07868
 </p>-->
 
 > [!WARNING]
-> This simulation software is not and -will never be- as high-performing as it should be. <br>
+> This simulation software is not and *will never be* as high-performing as it should be.<br>
 > Keep expectations low.
 
 ## Build
