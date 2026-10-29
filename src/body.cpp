@@ -41,8 +41,8 @@ void Bodies::draw2D() const {
         for (size_t i = 0; i < count; i++) {
             //drawTrail2D(trail[i], i);
             //DrawCircle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 1.0f, color[i]);
-            DrawRectangle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 2, 2, color[i]);
-            //DrawPixel(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), color[i]);
+            //DrawRectangle(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), 2, 2, color[i]);
+            DrawPixel(static_cast<int>(pos_x[i]), static_cast<int>(pos_y[i]), color[i]);
         }
     }
 

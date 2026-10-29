@@ -76,11 +76,12 @@ The opt mode only changes how far the inner loop goes, which bodies act as gravi
 | Code | Example |
 |:-|:-:|
 |```./nbody 3000```|<img src="media/nbody3000.png" width=400px>|
+|```./nbody -spiral 100000 --tilt1 45 -b```|<img src="media/spiral.png" width="400">|
 |```./nbody 100000 -fps -b -glxy -fps```|<img src="media/m.png" width=400px height=250>|
-|```./nbody -blend 10```|<img src="media/img10.png" width=400px>|
-|```./nbody 1000 -glxy -blend -3D --tilt2 90```|<img src="media/img3d-n.jpeg" width=400px>|
-|```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
 |```./nbody 100000 -fps -b -glxy --opt 1```| <img src="media/eyes.png" width="400"> |
+|```./nbody -blend 10```|<img src="media/img10.png" width=400px>|
+|```make -C build galaxy1```|<img src="media/cmakeG1.png" width="400">|
+|```./nbody 1000 -glxy -blend -3D --tilt2 90```|<img src="media/img3d-n.jpeg" width=400px>|
 |```see media/..```||
 
 ## How It Works
