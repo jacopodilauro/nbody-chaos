@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 
     Config cfg;
     int ret = ParseArgs(argc, argv, cfg);
-    if (ret != -1) return ret;
+    if (ret != -1) return ret; 
 
     auto &[size, seed, opt_mode, tilt1, tilt2, is3D, showFPS, useBlend,useTrail, modeCstl] = cfg;
 
@@ -29,7 +29,8 @@ int main(int argc, char* argv[]){
     InitWindow(WIDTH, HEIGHT, "N Body Simulation");
     Bodies costellation(size);
 
-    if(modeCstl == "glxy") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed, opt_mode, tilt1, tilt2);
+    if (modeCstl == "glxy") InitGalaxyCollision(costellation, WIDTH, HEIGHT, seed, opt_mode, tilt1, tilt2);
+    else if (modeCstl == "spiral") InitSingleGalaxy(costellation, WIDTH, HEIGHT, seed, opt_mode, tilt1);
     else InitNBodies(costellation, WIDTH, HEIGHT, seed, OFFA, OFFB, V_MIN, V_MAX);
     
     Camera3D camera = { { WIDTH/2.0f - 500, HEIGHT/2.0f + 500.0f, 500.0f },
@@ -42,6 +43,8 @@ int main(int argc, char* argv[]){
     }
 
     SetTargetFPS(60);
+    int frameCount = 0;
+    bool recording = false;
     while (!WindowShouldClose())   
     {   
         // live controls
@@ -51,12 +54,13 @@ int main(int argc, char* argv[]){
             else EnableCursor();
         }
         if (IsKeyPressed(KEY_B)) useBlend = !useBlend;
+        if (IsKeyPressed(KEY_R)) recording = !recording;
         //---
 
         //Update
         //UpdateState(costellation, GetFrameTime() * 0.25);
         UpdateState(costellation, DT);
-        UpdateGalaxyColor(costellation);
+        if(modeCstl == "glxy") UpdateGalaxyColor(costellation);
         if(useTrail) UpdateTrail(costellation);
         //---
 
@@ -85,6 +89,11 @@ int main(int argc, char* argv[]){
                 EndMode3D();
             }
         EndDrawing();
+        if (recording) {
+            Image img = LoadImageFromScreen();
+            ExportImage(img, TextFormat("frames/frame_%05d.png", frameCount++));
+            UnloadImage(img);
+        }
     }
     CloseWindow();
     return 0;    

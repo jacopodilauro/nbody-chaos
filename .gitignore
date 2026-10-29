@@ -2,3 +2,5 @@ nbody
 build/
 todo.md
 media/galaxy2D.mp4
+frames/
+*.mp4

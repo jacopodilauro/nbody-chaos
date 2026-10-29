@@ -21,8 +21,9 @@ void UpdateGalaxyColor(Bodies &cstl);
 
 void UpdateTrail(Bodies &cstl);
 
-void DrawCustomGrid(Vector3 center, int slices, float spacing) ;
+void DrawCustomGrid(Vector3 center, int slices, float spacing);
 
-void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, unsigned int opt_mode, float g1tilt, float g2tilt) ;
+void InitGalaxyCollision(Bodies &b, float WIDTH, float HEIGHT, int seed, unsigned int opt_mode, float g1tilt, float g2tilt);
 
+void InitSingleGalaxy(Bodies &cstl, float WIDTH, float HEIGHT, int seed, unsigned int opt_mode, float tiltDeg);
 #endif

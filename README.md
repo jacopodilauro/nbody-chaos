@@ -55,7 +55,7 @@ make -C build galaxy2
 |:-|:-:|
 | `<N>` | set number of bodies (default 3) |
 | `-3D` | start in 3D view |
-| `-glxy` | Enable galaxy collision mode |
+| `-glxy`or`-spiral` | Enable galaxy collision mode |
 | `-fps` | Show FPS |
 | `-blend`, `-b` | Enable blending mode |
 | `-trail`, `-t` | Enable trails|

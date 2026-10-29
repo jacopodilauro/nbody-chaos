@@ -92,7 +92,7 @@ void UpdateGalaxyColor(Bodies &cstl){
         if (cstl.mass[i] < 1.0) {
             float l_vx = cstl.vel_x[i], l_vy = cstl.vel_y[i], l_vz = cstl.vel_z[i];
             float speed = std::sqrt(l_vx*l_vx + l_vy*l_vy + l_vz*l_vz);
-            float s = std::min(1.0f, static_cast<float>(speed / 1200.0));
+            float s = std::min(1.0f, static_cast<float>(speed / 2000.0));
             if(i < m){
                 cstl.color[i] = Color{
                     static_cast<unsigned char>(45 + 210 * s * s),
@@ -186,5 +186,40 @@ void InitGalaxyCollision(Bodies &cstl, float WIDTH, float HEIGHT, int seed, unsi
         Vector3 vv = Vector3Add(centerVel, offVel);
 
         cstl.setBody(i, 0.01, p, vv, {0}, WHITE);
+    }
+}
+
+
+void InitSingleGalaxy(Bodies &cstl, float WIDTH, float HEIGHT, int seed, unsigned int opt_mode, float tiltDeg) {
+    size_t size = cstl.count;
+    if (size < 2) return;
+    cstl.opt_importantcount = opt_mode == 0 ? size : 1;
+
+    std::mt19937 gen(seed);
+    std::exponential_distribution<float> distR(1.0f / 100.0f);  
+    std::uniform_real_distribution<float> uni(0.0f, 2.0f * PI);
+    std::normal_distribution<float> noise(0.0f, 1.0f);
+
+    float bhMass = 80000.0f;
+    Vector3 center = {WIDTH / 2.0f, HEIGHT / 2.0f, 0.0f};
+    cstl.setBody(0, bhMass, center, {0.0f, 0.0f, 0.0f}, {0}, WHITE);
+
+    for (size_t i = 1; i < size; i++) {
+        float r = std::min(15.0f + distR(gen), 380.0f);
+        // inner stars: random angle (bulge), outer stars: two trailing log-spiral arms
+        float angle = r < 40.0f ? uni(gen) : (i % 2) * PI - 3.0f * std::log(r) + noise(gen) * 0.3f;
+
+        Vector3 offPos = {r * std::cos(angle), r * std::sin(angle), noise(gen) * 4.0f};
+        float v = std::sqrt(G * bhMass * r * r / std::pow(r * r + EPS2, 1.5f));
+        Vector3 offVel = {-v * std::sin(angle), v * std::cos(angle), 0.0f};
+
+        offPos = Vector3RotateByAxisAngle(offPos, {1.0f, 0.0f, 0.0f}, tiltDeg * DEG2RAD);
+        offVel = Vector3RotateByAxisAngle(offVel, {1.0f, 0.0f, 0.0f}, tiltDeg * DEG2RAD);
+
+        float f = r / 380.0f;   // yellow center -> blue edge
+        Color c = {static_cast<unsigned char>(255 - 135 * f), static_cast<unsigned char>(220 - 60 * f),
+                   static_cast<unsigned char>(140 + 115 * f), 255};
+
+        cstl.setBody(i, 0.01f, Vector3Add(center, offPos), offVel, {0}, c);
     }
 }

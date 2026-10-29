@@ -26,6 +26,8 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             cfg.is3D = true;
         } else if (arg == "-glxy") {
             cfg.modeCstl = "glxy";
+        }else if (arg == "-spiral") {
+            cfg.modeCstl = "spiral";
         } else if (arg == "-fps") {
             cfg.showFPS = true;
         } else if (arg == "-blend" || arg == "-b") {
@@ -88,6 +90,7 @@ inline int ParseArgs(int argc, char* argv[], Config &cfg) {
             std::cout << "Options:\n";
             std::cout << "  -3D                  Enable 3D visualization\n";
             std::cout << "  -glxy                Enable galaxy collision mode\n";
+            std::cout << "  -spiral              Enable single spiral mode\n";
             std::cout << "  -fps                 Show FPS on screen\n";
             std::cout << "  -blend, -b           Enable blending mode\n";
             std::cout << "  -trail, -t           Draw Trail\n";
