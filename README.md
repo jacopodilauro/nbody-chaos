@@ -3,7 +3,8 @@
 Gravitational N-body simulation in C++ with [raylib](#credits), from the three-body problem to trying to collide galaxies.  See [how it works](#how-it-works).
 
 
-https://github.com/user-attachments/assets/dd21132d-aea7-4bcd-acb3-04e68fe07868
+https://github.com/user-attachments/assets/acd5f6db-6b78-44c3-b813-6f78fa62f740
+
 
 > [!WARNING]
 > This simulation software is not and -will never be- as high-performing as it should be.
